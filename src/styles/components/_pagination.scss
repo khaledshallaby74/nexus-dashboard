@@ -1,0 +1,95 @@
+@use '../abstract/variables' as *;
+@use '../abstract/mixins' as *;
+@use '../abstract/functions' as *;
+
+/**
+ * Pagination Container Styles
+ * ---------------------------------------------------------
+ * Layout shell for the pagination bar. Defaults to a mobile-first design 
+ * that optimizes spacing and visibility for smaller viewports.
+ */
+.pagination-container {
+  @include flex-between; // Space navigation buttons apart on small screens
+  @include spacing(gap, 12);
+  @include spacing(py, 16);
+  border-top: 1px solid var(--border-color);
+
+  /**
+   * Pagination Action Buttons (Prev / Next)
+   * Handles core directional navigation layout and dynamic states.
+   */
+  .btn-pagination {
+    @include flex-center;
+    @include spacing(gap, 6);
+    @include spacing(px, 12);
+    @include spacing(py, 8);
+    @include border;
+    @include radius(6px);
+    background: var(--bg-card);
+    color: var(--text-main);
+    font-size: map-get($font-sizes, '12');
+    @include transition(all);
+
+    // Disabled state for boundary constraints (e.g., first or last page)
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: var(--border-color);
+    }
+
+    // Active interactive state for valid user triggers
+    &:not(:disabled):hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  }
+
+  /**
+   * Numeric Pages List Wrapper
+   * Hidden by default on mobile devices to preserve core horizontal real estate.
+   */
+  .pages-list {
+    display: none; 
+
+    // Individual numeric page button entity
+    .page-number-item {
+      @include flex-center;
+      width: 36px;
+      height: 36px;
+      @include radius(6px);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: map-get($font-weights, medium);
+      font-size: map-get($font-sizes, '12');
+      @include transition(all);
+
+      // Interactive hover state for standard numeric elements
+      &:hover {
+        background: var(--bg-main);
+        color: var(--primary);
+      }
+
+      // Explicit highlighted state matching the current selected page signal
+      &.active {
+        background: var(--primary);
+        color: #fff;
+      }
+    }
+  }
+
+  /**
+   * Tablet and Desktop Layout Adaptation (MD Breakpoint)
+   * Switches to a centered layout scheme and displays the sequential numeric matrix.
+   */
+  @include respond-to('md') {
+    @include flex-center; // Re-align controls centrally on wider views
+    @include spacing(gap, 24);
+
+    // Reveal the nested numeric controls sequentially 
+    .pages-list {
+      @include flex-center; 
+      @include spacing(gap, 8);
+    }
+  }
+}

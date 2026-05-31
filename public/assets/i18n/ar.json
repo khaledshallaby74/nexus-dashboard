@@ -1,0 +1,114 @@
+{
+    "_comment_common": "Shared/common labels used across the application",
+    "COMMON": {
+        "_comment": "Common navigation & UI labels - Arabic translations",
+        "DASHBOARD": "لوحة التحكم",
+        "PRODUCTS": "المنتجات",
+        "USERS": "المستخدمين",
+        "CATEGORIES": "الأقسام",
+        "PRODUCT_SINGULAR": "منتج",
+        "TOGGLE_THEME": "تغيير الوضع",
+        "TABLE": "جدول",
+        "CARDS": "بطاقات",
+        "SEARCH_PLACEHOLDER": "بحث..."
+    },
+    "BUTTONS": {
+        "CANCEL": "إلغاء"
+    },
+    "VALIDATION": {
+        "REQUIRED": "هذا الحقل مطلوب."
+    },
+    "_comment_sidebar": "Sidebar navigation structure and labels",
+    "SIDEBAR": {
+        "GROUPS": {
+            "_comment": "Navigation group headings",
+            "MAIN": "الرئيسية",
+            "ACCOUNT": "الحساب"
+        },
+        "LABELS": {
+            "_comment": "Sidebar link labels",
+            "DASHBOARD": "لوحة التحكم",
+            "PRODUCTS": "المنتجات",
+            "CATEGORIES": "الأقسام",
+            "ORDERS": "الطلبات",
+            "CUSTOMERS": "العملاء",
+            "PROFILE": "الملف الشخصي",
+            "SETTINGS": "الإعدادات",
+            "SEARCH_HINT": "بحث..."
+        }
+    },
+    "_comment_filter_bar": "Filter bar section: titles, buttons, field labels, and aria labels",
+    "FILTER_BAR": {
+        "_comment": "Dynamic labels using {{ variable }} interpolation",
+        "GENERIC_TITLE": "{{ moduleName }}",
+        "GENERIC_SUBTITLE": "إدارة دليل {{ moduleName }}، البحث، التصفية، وعمليات الإضافة والتعديل الحيوية.",
+        "BTN_NEW_PREFIX": "{{ entityName }} جديد",
+        "LABELS": {
+            "SEARCH": "البحث",
+            "CATEGORY": "القسم"
+        },
+        "LOADING_SEGMENTS": "جاري تحميل الأقسام...",
+        "ARIA": {
+            "CREATE_ENTITY": "إنشاء وإضافة {{ entityName }} جديد إلى الدليل",
+            "NAV_FILTERS": "فلاتر دليل {{ moduleName }}"
+        }
+    },
+    "TABLE": {
+        "HEADERS": {
+            "TITLE": "الاسم",
+            "CATEGORY": "القسم",
+            "PRICE": "السعر",
+            "STOCK": "المخزون",
+            "EDIT": "تعديل",
+            "DELETE": "حذف"
+        },
+        "BADGES": {
+            "BEAUTY": "مستحضرات تجميل",
+            "FRAGRANCES": "عطور",
+            "FURNITURE": "أثاث",
+            "GROCERIES": "بِقالة"
+        },
+        "NO_RECORDS": "لم يتم العثور على سجلات"
+    },
+    "PAGINATION": {
+        "ARIA": {
+            "NAV": "التنقل بين الصفحات",
+            "PREV": "الذهاب للصفحة السابقة",
+            "NEXT": "الذهاب للصفحة التالية",
+            "PAGE": "الذهاب لصفحة {{ page }}"
+        }
+    },
+    "PRODUCT": {
+        "PAGES": {
+            "CREATE_TITLE": "إضافة منتج جديد",
+            "EDIT_TITLE": "تعديل المنتج",
+            "SUBTITLE_CREATE_INFO": "أدخل تفاصيل المنتج الجديد والوسائط الخاصة به في الدليل.",
+            "SUBTITLE_EDIT_INFO": "تحديث معلومات المنتج الحالي والصور والبيانات اللوجستية."
+        },
+        "BUTTONS": {
+            "CREATE": "حفظ ونشر المنتج",
+            "UPDATE": "تحديث بيانات المنتج"
+        },
+        "FIELDS": {
+            "TITLE": "اسم المنتج",
+            "BRAND": "العلامة التجارية",
+            "CATEGORY": "القسم",
+            "PRICE": "السعر",
+            "DISCOUNT": "نسبة الخصم",
+            "STOCK": "كمية المخزون",
+            "SKU": "رمز وحدة التخزين (SKU)",
+            "WEIGHT": "الوزن",
+            "WARRANTY": "تفاصيل الضمان",
+            "SHIPPING": "معلومات الشحن",
+            "RETURN_POLICY": "سياسة الاسترجاع",
+            "DESCRIPTION": "الوصف بالتفصيل",
+            "IMAGE_URL_1": "رابط الصورة الأولى",
+            "IMAGE_URL_2": "رابط الصورة الثانية",
+            "IMAGE_URL_3": "رابط الصورة الثالثة",
+            "THUMBNAIL": "رابط الصورة المصغرة (Thumbnail)"
+        },
+        "PLACEHOLDERS": {
+            "SELECT_OPTION": "اختر القسم..."
+        }
+    }
+}

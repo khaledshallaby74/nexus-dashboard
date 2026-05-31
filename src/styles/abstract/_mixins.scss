@@ -1,0 +1,358 @@
+@use 'variables' as *;
+/* =========================================================
+   MIXINS: TYPOGRAPHY
+   ========================================================= */
+
+/**
+
+
+ * Font Face Declaration
+ * Dynamically registers fonts with different weights
+ */
+@mixin font-face($family, $weight, $folderName, $fileName) {
+  @font-face {
+    font-family: $family;
+    src: url('/assets/fonts/#{$folderName}/#{$fileName}.woff2') format('woff2');
+    font-weight: $weight;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+
+/* =========================================================
+   MIXINS: SPACING SYSTEM
+   ========================================================= */
+
+/**
+ * Dynamic spacing generator (padding / margin)
+ * Supports logical properties (inline, block, start, end)
+ */
+@mixin spacing($short, $size) {
+  /** Retrieve the numeric value from the central spacings map */
+  $value: map-get($spacings, "#{$size}"); 
+  
+  /** Determine the CSS property based on the first character */
+  $first-char: str-slice($short, 1, 1);
+  $prop: if($first-char == 'p', 'padding', if($first-char == 'm', 'margin', 'gap'));
+  
+  /** Determine the direction/axis (all, x, y, top, bottom, etc.) */
+  $dir: if(str-length($short) > 1, str-slice($short, 2, 2), 'all');
+
+  @if $value != null {
+      @if $prop == 'gap' {
+          gap: $value !important;
+      } @else {
+          @if $dir == 'all'      { #{$prop}: $value !important; }
+          @else if $dir == 'x'   { #{$prop}-inline: $value !important; }
+          @else if $dir == 'y'   { #{$prop}-block: $value !important; }
+          @else if $dir == 't'   { #{$prop}-top: $value !important; }
+          @else if $dir == 'b'   { #{$prop}-bottom: $value !important; }
+          @else if $dir == 's'   { #{$prop}-inline-start: $value !important; }
+          @else if $dir == 'e'   { #{$prop}-inline-end: $value !important; }
+      }
+  } @else {
+    /** Professional warning for debugging missing map keys */
+    @warn "Architecture Warning: The spacing key '#{$size}' is undefined in the $spacings map. Please verify your variables configuration.";
+  }
+}
+
+/* =========================================================
+   MIXINS: SCROLLBAR
+   ========================================================= */
+
+/**
+ * Custom scrollbar styling (Webkit-based)
+ */
+@mixin custom-scrollbar-mixin {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto; 
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bg-main);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+
+    &:hover {
+      background: var(--primary);
+    }
+  }
+}
+
+
+/* =========================================================
+   MIXINS: INTERACTIVE EFFECTS (Refactored)
+   ========================================================= */
+
+/**
+ * Hover Elevation: The ultimate "approaching" effect.
+ * Combines vertical lift and a dynamic shadow to simulate depth.
+ * Default: -5px lift and subtle shadow.
+ */
+@mixin hover-lift($y: -5px, $shadow: 0 10px 30px rgba(0, 0, 0, 0.12)) {
+  // Use our smooth-transition mixin to ensure fluid motion
+  @include smooth-transition(0.3s, transform, box-shadow); 
+  
+  &:hover {
+    transform: translateY($y);
+    box-shadow: $shadow;
+  }
+}
+
+/**
+ * Hover Zoom: Physical scaling effect.
+ * Default: 5% increase in size.
+ */
+@mixin hover-zoom($scale: 1.05) {
+  @include smooth-transition(0.3s, transform);
+  
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+/**
+ * The "Press" Effect: Squish feedback for buttons/cards.
+ * Essential for mobile-friendly tactile feedback.
+ * Default: 5% shrink.
+ */
+@mixin active-press($scale: 0.95) {
+  // Shorter duration (0.1s) for immediate click feedback
+  @include smooth-transition(0.1s, transform); 
+  
+  &:active {
+    transform: scale($scale);
+  }
+}
+
+/**
+ * Smooth transition helper
+ */
+@mixin smooth-transition($duration: 0.3s, $properties...) {
+  $spec: ();
+  @each $prop in $properties {
+    $spec: append($spec, #{$prop} $duration cubic-bezier(0.4, 0, 0.2, 1), comma);
+  }
+  @if length($properties) == 0 {
+    transition: all $duration cubic-bezier(0.4, 0, 0.2, 1);
+  } @else {
+    transition: $spec;
+    will-change: #{$properties};
+  }
+}
+/**
+ * Optimized icon animation (used for toggles)
+ */
+@mixin smooth-icon-switch($duration: 4s) {
+  display: inline-block;
+  transition: transform $duration cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity $duration ease,
+              filter ($duration * 0.4) ease;
+
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+
+/* =========================================================
+   MIXINS: FLEX LAYOUT
+   ========================================================= */
+
+/**
+ * Center alignment (both axes)
+ */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/**
+ * Space-between alignment
+ */
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+
+/**
+ * Start alignment
+ */
+@mixin flex-start {
+  display: flex;
+  justify-content: flex-start !important;
+  align-items: center;
+}
+
+
+/* =========================================================
+   MIXINS: IMAGES
+   ========================================================= */
+
+/**
+ * Base background image behavior
+ */
+@mixin img-base {
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+/* =========================================================
+   MIXINS: RESPONSIVE
+   ========================================================= */
+
+/**
+ * Media query helper (mobile-first)
+ */
+@mixin respond-to($breakpoint, $direction: 'up') {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $width: map-get($breakpoints, $breakpoint);
+    
+    @if $direction == 'up' {
+      @media (min-width: $width) { @content; }
+    } @else if $direction == 'down' {
+      @media (max-width: ($width - 0.02px)) { @content; }
+    }
+  } @else {
+    @error " #{$breakpoint}";
+  }
+}
+
+
+/* =========================================================
+   MIXINS: TRANSITION
+========================================================= */
+$transition-base: 250ms;
+
+@mixin transition($props...) {
+  transition: $props $transition-base cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+/* =========================================================
+   MIXINS: EFFECTS & BOX SHADOW SYSTEM
+========================================================= */
+/**
+ * Box Shadow System (Elevation Levels)
+ * ---------------------------------------------------------
+ * Highly optimized shadow levels for consistent dashboard UI.
+ * Connects directly to global CSS variables to handle light/dark themes natively.
+ */
+
+// Dropdown Menu & Light Floating Cards
+@mixin shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    [data-theme="dark"] & {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.6), 
+  }
+}
+
+// Standard Product / Analytics Dashboard Cards
+@mixin shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  [data-theme="dark"] & {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5),  0 2px 4px -2px rgba(0, 0, 0, 0.3),
+  }
+}
+
+// Large Popups, Modals, or Expanded Filters
+@mixin shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    [data-theme="dark"] & {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6),  0 4px 6px -4px rgba(0, 0, 0, 0.4),
+  }
+}
+
+// Smooth hover effect using the centralized elevation system
+@mixin shadow-hover {
+  @include smooth-transition(0.3s, box-shadow);
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Clean Scale Transition Helper
+@mixin hover-scale {
+  @include smooth-transition(0.2s, transform);
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+
+/* =========================================================
+   MIXINS: BORDERS & SHAPES
+   ========================================================= */
+
+/**
+ * Base border utility
+ */
+@mixin border($side: 'all', $width: 1px, $color: var(--border)) {
+  $border-style: #{$width} solid #{$color};
+
+  @if $side == 'all' {
+    border: $border-style;
+  } @else {
+    border-#{$side}: $border-style;
+  }
+}
+
+/**
+ * Dynamic border radius helper
+ */
+@mixin radius($size: 8px, $position: 'all') {
+  @if $position == 'all' {
+    border-radius: $size !important;
+  } @else if $position == 'top' {
+    border-top-left-radius: $size !important;
+    border-top-right-radius: $size !important;
+  } @else if $position == 'bottom' {
+    border-bottom-left-radius: $size !important;
+    border-bottom-right-radius: $size !important;
+  } @else if $position == 'start' {
+    border-start-start-radius: $size !important;
+    border-end-start-radius: $size !important;
+  } @else if $position == 'end' {
+    border-start-end-radius: $size !important;
+    border-end-end-radius: $size !important;
+  } @else {
+    border-#{$position}-radius: $size !important;
+  }
+}
+
+/* =========================================================
+   MIXINS: EXTRA (missing ones fixed)
+========================================================= */ 
+@mixin scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+  }
+}
+
+// 💡 ميكسين موحد لقطع النصوص الطويلة برؤية سينيور وتوافقية كاملة
+@mixin line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  
+  // الخاصية القياسية للتوافقية المستقبلية وإسكات الـ Linter
+  line-clamp: $lines; 
+  overflow: hidden;
+}

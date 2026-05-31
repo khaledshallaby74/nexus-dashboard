@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NexusDashboard</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<script>
+  (function() {
+    
+    try {
+      // Retrieve the user's preference from LocalStorage or default to 'light'
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      // Apply the theme attribute to the <html> tag for CSS targeting
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+    } catch (e) {
+      console.error("Theme initialization failed", e);
+    }
+  })();
+</script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

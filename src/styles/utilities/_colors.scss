@@ -1,0 +1,46 @@
+@use '../abstract/variables' as *;
+/**
+ * Theme Color Map:
+ * Bridges the gap between dynamic CSS variables (for theming) 
+ * and static design tokens (brand/scale colors).
+ */
+$theme-colors : (
+    // --- Semantic (Theme-Aware): Automatically updates when switching Dark/Light mode ---
+    "primary" : var(--primary),
+    "main"    : var(--text-main),
+    "muted"   : var(--text-muted),
+    "bg"      : var(--bg-main),
+    "card"    : var(--bg-card),
+    "border"  : var(--border),
+
+    // --- Static Colors (Brand & Status): Consistent across all themes ---
+    "success" : #{$success},
+    "error"   : #{$error},
+    "white"   : #{$white},
+
+    // --- Functional Scales: Specific shades for detailed UI elements ---
+    "blue-500"  : #{$blue-500},
+    "blue-dark" : #{$blue-600},
+    "gray-100"  : #{$gray-100},
+    "gray-700"  : #{$gray-700},
+    "gray-800"  : #{$gray-800},
+    "gray-900"  : #{$gray-900},
+    "green-500" : #{$green-500}
+);
+
+/**
+ * Utility Class Generator:
+ * Iterates through the color map to generate helper classes 
+ * for background and text colors (e.g., .bg-primary, .text-muted).
+ */
+@each $name, $value in $theme-colors {
+    // Background Utility: Forces application via !important for layout consistency
+    .bg-#{$name} { 
+      background-color: $value !important; 
+    }
+
+    // Text Utility: Ensures typography colors align with the design system
+    .text-#{$name} { 
+      color: $value !important; 
+    }
+}

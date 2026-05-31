@@ -1,0 +1,13 @@
+<div class="search-box">
+  
+  <!-- Search icon -->
+  <span class="ic-base ic-search ic-s16 me-4 tex-white" aria-hidden="true"></span>
+  
+  <!-- Search input field -->
+  <input 
+    type="text" 
+    [value]="searchState()" 
+    (input)="onInputChange($event)"
+    [placeholder]="placeholder() | translate" 
+    [attr.aria-label]="ariaLabel()" />
+</div>

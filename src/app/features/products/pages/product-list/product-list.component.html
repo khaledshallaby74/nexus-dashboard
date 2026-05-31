@@ -1,0 +1,68 @@
+<div class="product-list-page-container">
+
+  <!---------------- FILTER BAR ---------------->
+  <!-- Smart child: emits filter, view-mode, and add-product events upward -->
+  <app-product-filter-bar
+    [categories]="productsService.categories()"
+    (filterChange)="onFilterChange($event)"
+    (viewModeChange)="onViewModeChange($event)"
+    (addNewProduct)="onAddNewProduct()">
+  </app-product-filter-bar>
+
+  <!---------------- CONTENT ZONE ---------------->
+  <div class="main-content-display-zone">
+
+    <!-- TABLE VIEW — standard row-based layout -->
+    @if (productsService.viewMode() === 'table') {
+
+      <app-generic-table
+        [data]="productsService.products()"
+        [config]="productsService.tableColumnsConfig()"
+        (rowClick)="onViewProductDetails($event)"
+        (actionClick)="onProductAction($any($event.action), $event.row)">
+      </app-generic-table>
+
+    } @else {
+
+      <!-- CARDS VIEW — responsive flex/grid layout -->
+      <div class="cards-grid">
+        @for (product of productsService.products(); track product.id) {
+
+          <!-- @defer + viewport — lazy loads cards only when scrolled into view
+               huge performance win for large datasets -->
+          @defer (on viewport) {
+            <app-generic-card
+              (cardClick)="onViewProductDetails(product)"
+              (edit)="onProductAction('edit', product)"
+              (delete)="onProductAction('delete', product)">
+
+              <!-- Projected content via [card-body] selector (see generic-card template) -->
+              <app-product-card card-body [product]="product"></app-product-card>
+
+            </app-generic-card>
+          } @placeholder {
+            <!-- Skeleton loader shown while card is off-screen — prevents layout shift -->
+            <div class="card-skeleton-loader" aria-hidden="true"></div>
+          }
+
+        }
+      </div>
+    }
+
+  </div>
+
+  <!---------------- PAGINATION ---------------->
+  <!-- Conditionally rendered — only shown when items exceed page limit -->
+  @if (productsService.totalItems() > productsService.limitState()) {
+    <div class="pagination-footer-wrapper flex-center mt-4 pt-3">
+      <app-pagination
+        [totalItems]="productsService.totalItems()"
+        [pageSize]="productsService.limitState()"
+        [currentPage]="productsService.currentPage()"
+        (pageChange)="productsService.onPageChange($event)">
+      </app-pagination>
+    </div>
+  }
+
+</div>
+

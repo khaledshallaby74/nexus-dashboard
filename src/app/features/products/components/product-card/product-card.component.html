@@ -1,0 +1,29 @@
+<div class="card-custom-layout">
+
+  <!---------------- IMAGE ZONE ---------------->
+  <div class="image-zone">
+    <!-- loading="lazy" — defers off-screen image loading, boosts performance -->
+    <img class="img-contain p-12"
+      [src]="product().thumbnail"
+      [alt]="product().title"
+      loading="lazy" />
+  </div>
+
+  <!---------------- INFO ZONE ---------------->
+  <div class="info-zone">
+
+    <!-- Title + price on one row — keeps a clean scan-line -->
+    <div class="title-price-row">
+      <h3 class="title">{{ product().title }}</h3>
+      <span class="price">${{ product().price }}</span>
+    </div>
+
+    <!-- Category as a small pill/badge (implied by class name) -->
+    <span class="category-text">{{ product().category }}</span>
+    <!-- Description clipped to 2-3 lines via CSS (line-clamp expected) -->
+    <p class="description-text">{{ product().description }}</p>
+
+  </div>
+</div>
+
+

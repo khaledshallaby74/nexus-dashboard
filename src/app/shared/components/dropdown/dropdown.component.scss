@@ -1,0 +1,79 @@
+
+@use 'abstract/variables' as *;
+@use 'abstract/mixins' as *;
+@use 'abstract/functions' as *;
+// Dropdown Layout & Theming
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  // The main clickable area that triggers the menu
+  .dropdown-trigger {
+    @include flex-center;
+    @include spacing(px, 12);
+    @include spacing(gap, 8);
+    @include border;
+    @include radius(8px);
+    @include transition(all);
+    background: var(--bg-card);
+    &:hover {
+      border-color: $green-500;
+    }
+  }
+  // Floating menu card 
+  .dropdown-menu-card {
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-card);
+    @include border;
+    @include radius(10px);
+    @include shadow-hover;
+    z-index: map-get($z-index, 'dropdown' );
+    // --- Senior Scroll & Constraints Configuration ---
+    // Calculates maximum height for exactly 6 items (6 items * ~38px each)
+    max-height: 230px; 
+    overflow-y: auto;   // Enables vertical scrolling only when items exceed max-height
+    overflow-x: hidden; // Prevents any accidental horizontal layout shifting
+    
+    // Custom scrollbar styling to match NEXUS dashboard identity
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+      &:hover {
+        background: var(--text-muted);
+      }
+    }
+
+    // Individual option styling
+    .menu-item {
+      @include spacing(px, 12);
+      @include spacing(py, 8);
+      @include radius(6px);
+      @include transition(background);
+      background: transparent;
+      color: var(--text-main);
+      
+      &:hover {
+        background: var(--bg-main);
+        color: $green-500;
+      }
+      
+      &.active {
+        background: rgba(var(--primary-rgb), 0.1);
+        color: $green-500;
+      }
+    }
+  }
+}
+
+// Keyframes بنفس ميكسن الانيميشن لو حابب
+@keyframes dropdown-pop {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.fade-in { animation: dropdown-pop 0.2s ease-out; }

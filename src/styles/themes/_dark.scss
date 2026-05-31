@@ -1,0 +1,17 @@
+@use 'abstract/variables' as *;
+
+/* --- DARK THEME CONFIGURATION --- */
+[data-theme = 'dark'] {
+// Background Colors: Main surface and card-level backgrounds
+    --bg-main: #{$gray-900};
+    --bg-card: #{$gray-800};
+    --bg-active: #{$gray-1000};
+// Typography: Primary and secondary (muted) text colors
+    --text-main: #{$white};
+    --text-muted: #{$gray-400};
+
+// UI Elements: Brand colors and structural borders
+    --primary: #{$blue-500}; 
+    --border: #{$gray-700};
+    --theme-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+}

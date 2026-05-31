@@ -1,0 +1,55 @@
+@use '/abstract/mixins' as *;
+@use '/abstract/variables' as *;
+/**
+ * Spinner Component: Provides visual feedback during asynchronous operations.
+ * Built with CSS animations for high performance.
+ */
+
+/* Container: Centers the loader within its parent context */
+.spinner-container {
+  @include flex-center;
+  @include spacing(p, 32);
+  width: 100%;
+}
+
+/* Spinner Core: The base rotating ring using system variables */
+.app-spinner {
+  width: 40px;
+  height: 40px;
+
+  // Uses the border mixin with a fallback color for the ring track
+  @include border(all, 3px);
+  border-top-color: var(--primary); // The rotating 'active' part of the ring
+
+  @include radius(50%); // Ensures a perfect circle
+
+  // Optimized animation timing using a cubic-bezier for a more natural 'spin' feel
+  animation: spin 0.75s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  display: inline-block;
+
+  /** 
+   * Size Variants:
+   * --sm: Ideal for buttons or inline text loading.
+   * --lg: Ideal for full-page or section-level loading.
+   */
+  &--sm {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+
+  &--lg {
+    width: 56px;
+    height: 56px;
+    border-width: 4px;
+  }
+}
+
+/** 
+ * Keyframe Definition: 
+ * Standard 360-degree rotation for the loading indicator.
+ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

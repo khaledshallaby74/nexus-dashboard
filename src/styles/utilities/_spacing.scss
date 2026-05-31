@@ -1,0 +1,63 @@
+@use '../abstract/mixins' as *;
+@use '../abstract/variables' as *;
+/**
+ * Spacing Utility Generator:
+ * Automatically creates margin, padding, and gap classes based on the $spacings map.
+ * Supports logical properties for seamless RTL/LTR compatibility.
+ */
+@each $size, $value in $spacings {
+
+  /* --- Padding Utilities --- */
+  .p-#{$size}  { padding: $value !important; }
+  .px-#{$size} { padding-inline: $value !important; } // Handles left & right logically
+  .py-#{$size} { padding-block: $value !important; }  // Handles top & bottom logically
+  .pt-#{$size} { padding-top: $value !important; }
+  .pb-#{$size} { padding-bottom: $value !important; }
+  
+  // Start/End padding: Resets physical properties to enforce logical flow
+  .ps-#{$size} { 
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-start: $value !important;
+   }
+  .pe-#{$size} { 
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: $value !important;
+   }
+
+  /* --- Margin Utilities --- */
+  .m-#{$size}  { margin: $value !important; }
+  .mx-#{$size} { margin-inline: $value !important; }
+  .my-#{$size} { margin-block: $value !important; }
+  .mt-#{$size} { margin-top: $value !important; }
+  .mb-#{$size} { margin-bottom: $value !important; }
+  
+  // Start/End margin: Enforces document direction (RTL/LTR)
+  .ms-#{$size} {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    margin-inline-start: $value !important;
+  }
+  .me-#{$size} {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    margin-inline-end: $value !important;
+  }
+
+  /* --- Flex/Grid Gap --- */
+  .gap-#{$size} { gap: $value !important; }
+}
+
+/* --- Semantic Layout Containers --- */
+
+/** Main page wrapper with standard gutter spacing */
+.page-container {
+  @include spacing(p, 24);
+}
+
+/** Specific padding for navigation or action links */
+.links-padding {
+  @include spacing(px, 16);
+  @include spacing(py, 12);
+}

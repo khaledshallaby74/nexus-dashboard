@@ -1,0 +1,13 @@
+/* =========================================================
+   FUNCTION: Z-INDEX
+   Returns z-index value from map
+   ========================================================= */
+
+@function z($key) {
+  @if map-has-key($z-index, $key) {
+    @return map-get($z-index, $key);
+  }
+
+  @warn "Unknown z-index: #{$key}";
+  @return 0;
+}

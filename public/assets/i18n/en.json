@@ -1,0 +1,113 @@
+{
+    "_comment_common": "Shared/common labels used across the application",
+    "COMMON": {
+        "_comment": "Common navigation & UI labels",
+        "DASHBOARD": "Dashboard",
+        "PRODUCTS": "Products",
+        "CATEGORIES": "Categories",
+        "PRODUCT_SINGULAR": "Product",
+        "TOGGLE_THEME": "Toggle Theme",
+        "TABLE": "Table",
+        "CARDS": "Cards",
+        "SEARCH_PLACEHOLDER": "Search..."
+    },
+    "BUTTONS": {
+        "CANCEL": "Cancel"
+    },
+    "VALIDATION": {
+        "REQUIRED": "This field is required."
+    },
+    "_comment_sidebar": "Sidebar navigation structure and labels",
+    "SIDEBAR": {
+        "GROUPS": {
+            "_comment": "Navigation group headings",
+            "MAIN": "MAIN",
+            "ACCOUNT": "ACCOUNT"
+        },
+        "LABELS": {
+            "_comment": "Sidebar link labels",
+            "DASHBOARD": "Dashboard",
+            "PRODUCTS": "Products",
+            "CATEGORIES": "Categories",
+            "ORDERS": "Orders",
+            "CUSTOMERS": "Customers",
+            "PROFILE": "Profile",
+            "SETTINGS": "Settings",
+            "SEARCH_HINT": "Search..."
+        }
+    },
+    "_comment_filter_bar": "Filter bar section: titles, buttons, field labels, and aria labels",
+    "FILTER_BAR": {
+        "_comment": "Dynamic labels using {{ variable }} interpolation",
+        "GENERIC_TITLE": "{{ moduleName }}",
+        "GENERIC_SUBTITLE": "Manage {{ moduleName }} catalog, search, filters, and CRUD workflows.",
+        "BTN_NEW_PREFIX": "New {{ entityName }}",
+        "LABELS": {
+            "SEARCH": "Search",
+            "CATEGORY": "Category"
+        },
+        "LOADING_SEGMENTS": "Loading segments...",
+        "ARIA": {
+            "CREATE_ENTITY": "Create and add a new {{ entityName }} to the catalog",
+            "NAV_FILTERS": "{{ moduleName }} catalog filters"
+        }
+    },
+    "TABLE": {
+        "HEADERS": {
+            "TITLE": "Title",
+            "CATEGORY": "Category",
+            "PRICE": "Price",
+            "STOCK": "Stock",
+            "EDIT": "Edit",
+            "DELETE": "Delete"
+        },
+        "BADGES": {
+            "BEAUTY": "Beauty",
+            "FRAGRANCES": "Fragrances",
+            "FURNITURE": "Furniture",
+            "GROCERIES": "Groceries"
+        },
+        "NO_RECORDS": "No records found"
+    },
+    "PAGINATION": {
+        "ARIA": {
+            "NAV": "Pagination Navigation",
+            "PREV": "Go to previous page",
+            "NEXT": "Go to next page",
+            "PAGE": "Go to page {{ page }}"
+        }
+    },
+    "PRODUCT": {
+        "PAGES": {
+            "CREATE_TITLE": "Create New Product",
+            "EDIT_TITLE": "Edit Product",
+            "SUBTITLE_CREATE_INFO": "Enter the details and media for the new product catalog entry.",
+            "SUBTITLE_EDIT_INFO": "Update product information, images, and logistics data."
+        },
+        "BUTTONS": {
+            "CREATE": "Save & Publish Product",
+            "UPDATE": "Update Product"
+        },
+        "FIELDS": {
+            "TITLE": "Title",
+            "BRAND": "Brand",
+            "CATEGORY": "Category",
+            "PRICE": "Price",
+            "DISCOUNT": "Discount Percentage",
+            "STOCK": "Stock",
+            "SKU": "SKU",
+            "WEIGHT": "Weight",
+            "WARRANTY": "Warranty Information",
+            "SHIPPING": "Shipping Information",
+            "RETURN_POLICY": "Return Policy",
+            "DESCRIPTION": "Description",
+            "IMAGE_URL_1": "Image URL 1",
+            "IMAGE_URL_2": "Image URL 2",
+            "IMAGE_URL_3": "Image URL 3",
+            "THUMBNAIL": "Thumbnail URL"
+        },
+        "PLACEHOLDERS": {
+            "SELECT_OPTION": "Select Category..."
+        }
+    }
+}

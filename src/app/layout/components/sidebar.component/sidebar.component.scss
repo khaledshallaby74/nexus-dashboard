@@ -1,0 +1,90 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+// Main Sidebar Container: Uses logical properties for LTR/RTL support
+.sidebar-container {
+  width: 260px;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  @include border(end); 
+   @include smooth-transition(0.3s, width);
+  @include custom-scrollbar-mixin;
+  z-index: map-get($z-index, 'fixed' );
+  // Collapsed State Logic: Adjusts visibility and alignment for 'Mini' mode
+  &.is-collapsed {
+    width: 80px;
+    @include respond-to('lg', 'up') {
+        // Hides text labels to show only icons
+        .sidebar-search, .nav-group p, h1, .nav-label {
+            display: none;
+        }
+        ul{
+            @include flex-center
+        }
+    }
+    .sidebar-header, .nav-item {
+        justify-content: center;
+    }
+  }
+
+  .sidebar-header {
+    min-height: $navbar-height;
+    .open{
+      position: absolute;
+      inset-inline-end: 0;
+    }
+  }
+  // Individual Navigation Links: Dynamic hover and active states
+  .nav-link {
+    @include flex-start;
+    @include spacing(gap, 16);
+    @include spacing(px, 16);
+    @include spacing(py, 12);
+    @include radius(8px);
+    @include transition(all); 
+    color: var(--text-main);
+    text-decoration: none;
+
+    // Hover effect: Interaction feedback for desktop users
+    &:hover:not(.active-link) {
+      background: var(--bg-main);
+      color: var(--primary);
+      @include hover-scale;
+    }
+    // Active Route Styling: Highlights the current page context
+    &.active-link {
+      background: var(--bg-active);
+      color: var(--primary) !important;
+      @include hover-scale;
+    }
+  }
+  
+  @include respond-to('xxl', 'up') {
+    width: 320px;
+  }
+  // Mobile Overlay: Transforms sidebar into a top-down dropdown for smaller screens
+  @include respond-to('lg', 'down') {
+    position: fixed;
+    inset-inline: 0; 
+    top: 0;
+    width: 100% !important; 
+    height: 100vh; 
+    transform: translateY(-100%);  // Starts off-screen
+    opacity: 0;
+    visibility:hidden;
+    @include smooth-transition(0.4s, transform, opacity, visibility);
+    z-index: z(fixed);
+    // Slides down when toggled
+    &:not(.is-collapsed) {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      @include hover-lift;
+    }
+    .sidebar-header {
+       @include spacing(py, 16);
+    }
+  }
+}

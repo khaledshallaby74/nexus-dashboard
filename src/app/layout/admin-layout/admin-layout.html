@@ -1,0 +1,21 @@
+<!-- Dashboard Master Layout: The entry point for the authenticated user interface -->
+<div class="dashboard-container theme-transition-wrapper">
+
+  <!-- Global Sidebar: Sticky/Fixed navigation based on view-port -->
+  <app-sidebar class="main-sidebar"></app-sidebar>
+  <!-- Main Viewport: Aggregates Top Navbar and Dynamic Routing -->
+  <div class="main-content-wrapper">
+    <!-- Top Navigation Bar -->
+    <app-navbar></app-navbar>
+    <!-- Page Content Area: Dynamic content based on Angular Router state -->
+    <main class="page-content px-3 mt-3" role="main">
+        <!-- Reactively monitors the centralized LoadingService state and Blocks user interactions and renders a unified spinner overlay during active asynchronous HTTP requests. -->
+  @if (loadingService.isLoading()) {
+    <div class="global-overlay-loader">
+        <app-spinner size="lg"></app-spinner>
+    </div>  }
+      <!-- Router outlet for injecting feature-level components (e.g., Products, Orders) -->
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

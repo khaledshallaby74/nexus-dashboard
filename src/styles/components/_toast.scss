@@ -1,0 +1,71 @@
+@use '/abstract/mixins' as *;
+@use '/abstract/variables' as *;
+/**
+ * Toast Notification: Floating feedback messages for system events.
+ * Uses hardware acceleration for smooth entry/exit animations.
+ */
+.toast-container {
+  position: fixed;
+
+  // Modern logical properties for dynamic positioning
+  inset-block-start: 20px;
+  inset-inline-end: 20px;
+
+  @include spacing(py, 16);
+  @include spacing(px, 24);
+
+  color: #fff;
+  @include radius(8px);
+
+  // Deep shadow to ensure visibility over any page content
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  z-index: z(fixed);
+
+  // Entry animation using optimized easing
+  animation: slideIn 0.3s ease-out;
+  
+  // Optimization: Tells the browser to pre-optimize transform and opacity changes
+  will-change: transform, opacity;
+
+  /**
+   * Status Variants:
+   * Each variant uses a background and a high-contrast accent border.
+   */
+  &.error {
+    background: var(--bg-error);
+    border-inline-start: 5px solid var(--error);
+  }
+
+  &.success {
+    background: var(--bg-success);
+    border-inline-start: 5px solid var(--success);
+  }
+
+  /**
+   * Right-to-Left (RTL) Support:
+   * Overrides positioning and animations for Arabic layout.
+   */
+  [dir='rtl'] & {
+    inset-inline-end: auto;
+    inset-inline-start: 20px;
+
+    border-inline-start: none;
+    border-inline-end: 5px solid currentColor; // Matches the variant's accent color
+
+    animation: slideInRtl 0.3s ease-out;
+  }
+}
+
+/** 
+ * Animation Keyframes:
+ * Slide-in from the right for LTR or left for RTL.
+ */
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRtl {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

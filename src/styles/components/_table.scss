@@ -1,0 +1,131 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+/**
+ * Responsive Table Viewport Wrapper
+ * ---------------------------------------------------------
+ * Prevents layout breaks by establishing an independent horizontal scroll container.
+ * Custom scrollbar aesthetics are applied via context-level abstraction mixins.
+ */
+.table-responsive-wrapper {
+  width: 100%;
+  background: transparent;
+  @include custom-scrollbar-mixin;
+}
+
+/**
+ * Status Context Indicators (Badge/Pill System)
+ * ---------------------------------------------------------
+ * Renders uniform structural shapes for system status tracking.
+ * Color variations are driven explicitly by semantic Sass system variables.
+ */
+.badge-pill {
+  @include spacing(py, 4);
+  @include radius(50px);
+  @include transition(background-color, color);
+
+  font-weight: map-get($font-weights, bold);
+  font-size: map-get($font-sizes, '12'); 
+
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  white-space: nowrap; // Layout protection: Guarding badge strings from breaking into multiple lines
+
+  /* Semantic Feedback Theme Mappings */
+  &.success, &.delivered, &.completed, &.active {
+    color: $success;
+  }
+  &.warning, &.pending, &.processing {
+    color: $warning;
+  }
+  &.danger, &.canceled, &.rejected, &.inactive {
+    color: $error;
+  }
+}
+
+/**
+ * Modern Tabular Data Design (Floating Row Pattern)
+ * ---------------------------------------------------------
+ * Replaces old monolithic grid frames with an independent floating row layout.
+ * Employs structural spacing separation over traditional collapsed boundary parameters.
+ */
+.table-modern {
+  width: 100%;
+  border-collapse: separate; // Required to properly isolate individual table rows via border-spacing
+  border-spacing: 0 10px;    // Implements consistent vertical spacing gaps between floating row elements
+  min-width: 700px;          // Establishes a rigid viewport floor before context horizontal scrolling triggers
+
+  /* Minimalist Grid Column Headers */
+  thead th {
+    color: var(--text-muted);
+    font-weight: map-get($font-weights, semibold);
+    font-size: map-get($font-sizes, '12');
+    @include spacing(py, 12);
+    @include spacing(px, 16);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: start;       // Direction-agnostic logical flow: adapts natively to LTR and RTL orientations
+    white-space: nowrap;     // Prevents header descriptors from breaking into disruptive vertical layouts
+  }
+
+  /* Micro-Interaction Row Layout States */
+  tbody tr {
+    background: var(--bg-card);
+    @include transition(box-shadow, transform);
+
+    &:hover {
+      @include shadow-lg;
+      cursor: pointer;
+      transform: translateY(-2px); // Subtle lifting micro-interaction to establish visual depth
+    }
+  }
+
+  /* Structural Field Cell Data Boxes */
+  tbody td {
+    @include spacing(p, 16);
+    color: var(--text-main);
+    vertical-align: middle; // Safely centers content vertically regardless of explicit cell heights
+    
+    // Senior Tactic: Encapsulated layout defense against deformed text lines
+    &.cell-text {
+      white-space: nowrap;       // Restricts textual payloads to a uniform single-line orientation
+      overflow: hidden;          // clips overflow segments cleanly when bounds are exceeded
+      text-overflow: ellipsis;   // Appends the classic '...' standard notation for lengthy text keys
+      max-width: 220px;          // Enforces an absolute cross-sectional width barrier for the text column
+    }
+  }
+
+  /* Logical Corner Radii: Applies outer rounded borders exclusively to row boundaries */
+  tbody td:first-child {
+    border-start-start-radius: 12px; // Top-Start logical tracking hook
+    border-end-start-radius: 12px;   // Bottom-Start logical tracking hook
+  }
+
+  tbody td:last-child {
+    border-start-end-radius: 12px;   // Top-End logical tracking hook
+    border-end-end-radius: 12px;     // Bottom-End logical tracking hook
+  }
+
+  /* Image Resolution Wrapper Box */
+  .cell-image-container {
+    width: 40px;
+    height: 40px;
+    @include radius(8px);
+    overflow: hidden;
+    background: var(--bg-body);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    .cell-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // Eliminates aspect-ratio layout warping on dynamic image streams
+    }
+  }
+
+  /* Full Width Content Frame Empty State */
+  .no-data-cell {
+    background: var(--bg-card);
+    @include radius(12px);
+    @include border;
+  }
+}

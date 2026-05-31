@@ -1,0 +1,30 @@
+<!-- Main container with outside click detection directive -->
+<div class="dropdown-container w-100" (appClickOutside)="close()">
+  <!-- Trigger Button: ARIA expanded state for screen readers -->
+  <button 
+    class="dropdown-trigger cursor-pointer w-100 py-2" 
+    (click)="toggle()"
+    type="button"
+    [attr.aria-expanded]="isOpen()"
+    aria-haspopup="listbox">
+    
+    <span class="fw-semibold fs-13 text-main">{{ selectedLabel() }}</span>
+    <!-- Sort Down Icon: Purely decorative, hidden from screen readers -->
+    <span class="ic-base mb-4 bg-cover ic-s14 text-main ic-sortDown" aria-hidden="true"></span>
+  </button>
+  <!-- Animated Menu: Conditionally rendered for performance (Signal based) -->
+  @if (isOpen()) {
+    <div class="dropdown-menu-card w-100 position-absolute fade-in" role="listbox">
+      <!-- Track by value for efficient DOM reconciliation -->
+      @for (item of items(); track item.value) {
+        <button 
+          class="menu-item w-100 flex-center" 
+          [class.active]="selectedValue === item.value"
+          (click)="select(item)"
+          role="option">
+          <span class="fs-12 fw-medium">{{ item.label }}</span>
+        </button>
+      }
+    </div>
+  }
+</div>

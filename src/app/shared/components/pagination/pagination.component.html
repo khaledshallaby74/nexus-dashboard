@@ -1,0 +1,44 @@
+<!-- Pagination Component Template -->
+<nav class="pagination-container flex-center w-100" role="navigation" [attr.aria-label]="'PAGINATION.ARIA.NAV' | translate">
+  
+  <!-- Previous Button -->
+  <button 
+    class="btn-pagination prev cursor-pointer ic-base ic-s20 bg-cover text-main"
+    [disabled]="!hasPrevious()"
+    (click)="onPageSelect(currentPage() - 1)"
+    [attr.aria-label]="'PAGINATION.ARIA.PREV' | translate"
+    [ngClass]="prevIconClass()">
+  </button>
+
+  <!-- Pages List -->
+  <div class="pages-list flex-center" role="list">
+    @for (page of pagesArray(); track $index) {
+      
+      <!-- Ellipsis for collapsed pages -->
+      @if (page === '...') {
+        <span class="pagination-dots">...</span>
+      } @else {
+        <!-- Individual Page Number Button -->
+        <button 
+          class="page-number-item text-muted cursor-pointer"
+          [class.active]="page === currentPage()"
+          (click)="onPageSelect(page)"
+          [attr.aria-current]="page === currentPage() ? 'page' : null"
+          [attr.aria-label]="'PAGINATION.ARIA.PAGE' | translate:{ page: page }">
+          {{ page }}
+        </button>
+      }
+
+    }
+  </div>
+
+  <!-- Next Button -->
+  <button 
+    class="btn-pagination next cursor-pointer ic-base ic-s20 bg-cover text-main"
+    [disabled]="!hasNext()"
+    (click)="onPageSelect(currentPage() + 1)"
+    [attr.aria-label]="'PAGINATION.ARIA.NEXT' | translate"
+    [ngClass]="nextIconClass()">
+  </button>
+
+</nav>

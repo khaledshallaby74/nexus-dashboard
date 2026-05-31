@@ -1,0 +1,17 @@
+/* --- LIGHT THEME (DEFAULT) --- */
+@use 'abstract/variables' as *;
+:root {
+    // Backgrounds: Default light surfaces
+    --bg-main: #{$gray-100};
+    --bg-card: #{$white};
+    --bg-active: #{$gray-200};
+
+    // Text: Primary dark text and subtle muted colors
+    --text-main: #{$gray-900};
+    --text-muted: #{$gray-400};
+
+    // Actions & Structure: Brand colors and default border shades
+    --primary : #{$blue-500};
+    --border : #{$gray-200};
+    --theme-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+}

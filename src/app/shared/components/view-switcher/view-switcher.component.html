@@ -1,0 +1,29 @@
+<div 
+  class="view-switcher-zone d-flex align-self-start" 
+  role="radiogroup" 
+  [attr.aria-label]="'FILTER_BAR.ARIA.NAV_FILTERS' | translate">
+  
+  <!-- Table view toggle button -->
+  <button 
+    type="button" 
+    class="btn-switch cursor-pointer" 
+    role="radio"
+    [attr.aria-checked]="currentMode() === 'table'"
+    [attr.aria-label]="'COMMON.TABLE' | translate"
+    [class.active]="currentMode() === 'table'"
+    (click)="changeMode('table')">
+      {{ 'COMMON.TABLE' | translate }}
+  </button>
+  
+  <!-- Cards view toggle button -->
+  <button 
+    type="button" 
+    class="btn-switch cursor-pointer" 
+    role="radio"
+    [attr.aria-checked]="currentMode() === 'cards'"
+    [attr.aria-label]="'COMMON.CARDS' | translate"
+    [class.active]="currentMode() === 'cards'"
+    (click)="changeMode('cards')">
+      {{ 'COMMON.CARDS' | translate }}
+  </button>
+</div>

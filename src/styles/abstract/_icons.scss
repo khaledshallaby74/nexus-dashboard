@@ -1,0 +1,60 @@
+/**
+ * ICON SYSTEM (Masking Technique)
+ * ---------------------------------------------------------
+ * This system treats SVGs as masks, allowing them to inherit 
+ * the text color (currentColor). This is the gold standard 
+ * for maintaining icons in Light/Dark mode projects.
+ */
+
+/* Base: Defines the core behavior of all icons */
+.ic-base {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+
+  // Crucial: The icon takes the color of its parent text
+  background-color: currentColor;
+
+  // Masking properties to ensure the SVG scales and centers correctly
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  // Webkit prefix for cross-browser compatibility (Safari/Chrome)
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  vertical-align: middle;
+}
+
+/* Sizes: Standardized sizing tokens for UI consistency */
+.ic-s16 { width: 16px; height: 16px; }
+.ic-s20 { width: 20px; height: 20px; }
+.ic-s24 { width: 24px; height: 24px; }
+.ic-s28 { width: 28px; height: 28px; }
+.ic-s32 { width: 32px; height: 32px; }
+.ic-s64 { width: 64px; height: 64px; }
+
+/**
+ * Icon Registry:
+ * Maps specific SVG paths to utility classes.
+ */
+.ic-dashboard  { mask-image: url('/assets/icons/Dashboard.svg'); -webkit-mask-image: url('/assets/icons/Dashboard.svg'); }
+.ic-categories { mask-image: url('/assets/icons/Categories.svg'); -webkit-mask-image: url('/assets/icons/Categories.svg'); }
+.ic-customers  { mask-image: url('/assets/icons/Customers.svg'); -webkit-mask-image: url('/assets/icons/Customers.svg'); }
+.ic-orders     { mask-image: url('/assets/icons/Orders.svg'); -webkit-mask-image: url('/assets/icons/Orders.svg'); }
+.ic-products   { mask-image: url('/assets/icons/Products.svg'); -webkit-mask-image: url('/assets/icons/Products.svg'); }
+.ic-profile    { mask-image: url('/assets/icons/Profile.svg'); -webkit-mask-image: url('/assets/icons/Profile.svg'); }
+.ic-settings   { mask-image: url('/assets/icons/Settings.svg'); -webkit-mask-image: url('/assets/icons/Settings.svg'); }
+.ic-menu       { mask-image: url('/assets/icons/Menu.svg'); -webkit-mask-image: url('/assets/icons/Menu.svg'); }
+.ic-close      { mask-image: url('/assets/icons/Close.svg'); -webkit-mask-image: url('/assets/icons/Close.svg'); }
+.ic-arrowRight { mask-image: url('/assets/icons/Arrow-Right.svg'); -webkit-mask-image: url('/assets/icons/Arrow-Right.svg'); }
+.ic-notification { mask-image: url('/assets/icons/Notification.svg'); -webkit-mask-image: url('/assets/icons/Notification.svg'); }
+.ic-search     { mask-image: url('/assets/icons/Search.svg'); -webkit-mask-image: url('/assets/icons/Search.svg'); }
+.ic-sortDown   { mask-image: url('/assets/icons/SortDown.svg'); -webkit-mask-image: url('/assets/icons/SortDown.svg'); }
+.ic-logo       { mask-image: url('/assets/icons/Logo.svg'); -webkit-mask-image: url('/assets/icons/Logo.svg'); }
+.ic-trash       { mask-image: url('/assets/icons/Delete.svg'); -webkit-mask-image: url('/assets/icons/Delete.svg'); }
+.ic-edit       { mask-image: url('/assets/icons/Edit.svg'); -webkit-mask-image: url('/assets/icons/Edit.svg'); }
+.ic-angle-left       { mask-image: url('/assets/icons/angle-left.svg'); -webkit-mask-image: url('/assets/icons/angle-left.svg'); }
+.ic-angle-right       { mask-image: url('/assets/icons/angle-right.svg'); -webkit-mask-image: url('/assets/icons/angle-right.svg'); }

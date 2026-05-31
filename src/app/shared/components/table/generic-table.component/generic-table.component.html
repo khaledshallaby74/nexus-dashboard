@@ -1,0 +1,75 @@
+<div class="table-responsive-wrapper w-100">
+  <table class="table-modern w-100" role="grid">
+
+    <!---------------- HEADER ---------------->
+    <thead>
+      <tr role="row">
+        @for (col of config(); track col.key) {
+          <th scope="col" role="columnheader">{{ col.label | translate }}</th>
+        }
+      </tr>
+    </thead>
+
+    <!---------------- BODY ---------------->
+    <tbody>
+      @for (row of data(); track row['id'] || $index) {
+        <!-- Interactive row — emits rowClick on tap -->
+        <tr role="row" class="table-row-interactive" (click)="rowClick.emit(row)">
+
+          @for (col of config(); track col.key) {
+            <!-- data-label — mirrors column label for responsive card-style fallback -->
+            <td role="gridcell" [attr.data-label]="col.label | translate">
+
+              <!-- TEXT CELL — default plain display -->
+              @if (!col.type || col.type === 'text') {
+                <span class="cell-text fs-14 fw-medium">{{ row[col.key] }}</span>
+              }
+
+              <!-- BADGE CELL — conditional styling via dynamic CSS class -->
+              @if (col.type === 'badge') {
+                <span class="badge-pill" [ngClass]="getBadgeClass(row[col.key], col.key)">
+                  @if (col.key === 'category') {
+                    {{ 'TABLE.BADGES.' + (row[col.key] | uppercase) | translate }}
+                  } @else {
+                    {{ col.key === 'price' ? '$' + row[col.key] : row[col.key] }}
+                  }
+                </span>
+              }
+
+              <!-- ACTIONS CELL — stopPropagation prevents rowClick -->
+              @if (col.type === 'actions') {
+                <div class="action-cell-wrapper" (click)="$event.stopPropagation()">
+                  @if (col.key === 'edit') {
+                    <button class="btn-action-icon edit" (click)="actionClick.emit({ action: 'edit', row: row })" [attr.aria-label]="'TABLE.HEADERS.EDIT' | translate">
+                      <span class="ic-base ic-edit text-main hover-zoom ic-s20 bg-cover cursor-pointer"></span>
+                    </button>
+                  }
+                  @if (col.key === 'delete') {
+                    <button class="btn-action-icon delete" (click)="actionClick.emit({ action: 'delete', row: row })" [attr.aria-label]="'TABLE.HEADERS.DELETE' | translate">
+                      <span class="ic-base bg-danger ic-trash ic-s20 bg-cover hover-zoom cursor-pointer"></span>
+                    </button>
+                  }
+                </div>
+              }
+
+            </td>
+          }
+
+        </tr>
+      } @empty {
+        <!-- EMPTY STATE — colspan spans all columns -->
+        <tr>
+          <td [attr.colspan]="config().length" class="text-center py-5 no-data-cell">
+            <div class="d-flex flex-column align-items-center gap-2">
+              <span class="fs-16 fw-medium text-muted">{{ 'TABLE.NO_RECORDS' | translate }}</span>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+
+  </table>
+</div>
+
+
+

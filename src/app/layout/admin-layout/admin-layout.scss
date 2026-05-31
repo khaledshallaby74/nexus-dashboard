@@ -1,0 +1,27 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+// Main Application Wrapper: Defines the global layout structure
+.dashboard-container {
+  display: flex; // Establishes a horizontal flex context for Sidebar and Main Content
+  min-height: 100vh;
+  background-color: var(--bg-main); // Bound to the theme system for seamless transitions
+  // Right-side Content Area: Stretches to fill remaining space
+  .main-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column; // Vertical stack for Navbar and Page Content
+    min-width: 0; // CRITICAL: Prevents flex children from overflowing their container
+    background-color: var(--bg-main);
+    @include smooth-transition(0.3s, background-color, color);
+    margin-top: $navbar-height;
+
+  }
+
+  // Router Outlet Container: Where the actual page components are rendered
+  .page-content {
+    flex: 1;
+    // @include spacing(p, 16); // Utilizing the centralized spacing system
+    overflow-y: auto; // Enables independent scrolling for the content area
+  }
+}

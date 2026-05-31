@@ -1,0 +1,188 @@
+@use '/abstract/mixins' as *;
+@use '/abstract/variables' as *;
+
+/**
+ * Enterprise Form Page Layout Architecture
+ * -----------------------------------------------------------------------------------
+ * Orchestrates the global page container structure, providing consistent padding 
+ * margins and semantic typography headers for the NEXUS form management suite.
+ */
+.form-page-container {
+  width: 100%;
+  @include spacing(px, 16);
+  @include spacing(py, 24);
+
+  .form-page-header {
+    .page-title { color: var(--text-main); }
+    .page-subtitle { color: var(--text-muted); }
+  }
+}
+
+/**
+ * Container Surface Specification
+ * -----------------------------------------------------------------------------------
+ * Defines the elevated dark-theme card wrapper utilizing semantic design tokens
+ * for depth perception (elevation) and spacing consistency.
+ */
+.form-card-wrapper {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  @include radius(12px);
+  @include shadow-md;
+  @include spacing(p, 32);
+
+  .row { margin: 0 !important; }
+
+  .form-label {
+    font-size: map-get($font-sizes, '12');
+    font-weight: map-get($font-weights, 'medium');
+    color: var(--text-muted);
+  }
+}
+
+/**
+ * Standardized Input Control Library
+ * -----------------------------------------------------------------------------------
+ * Governs the appearance, interactive state transitions (focus/invalid), and 
+ * high-contrast visual standards for all form input nodes.
+ */
+.form-control-custom {
+  width: 100%;
+  background: var(--bg-active, #0b0b14);
+  border: 1px solid #1f1f35;
+  @include radius(6px);
+  
+  @include spacing(px, 12);
+  @include spacing(py, 6);
+  font-size: map-get($font-sizes, '14');
+  outline: none;
+  color: #ffffff !important; 
+  @include transition(all); 
+
+  /* Focus: Active state with semantic green theme activation */
+  &:focus {
+    border-color: $green-500; 
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+  }
+
+  &::placeholder {
+    color: var(--text-white);
+    opacity: 0.4;
+  }
+
+  /* Validation feedback: High-contrast error state trigger */
+  &.ng-touched.ng-invalid {
+    border-color: var(--danger, #ef4444);
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+    }
+  }
+}
+
+.textarea-custom {
+  height: auto !important;
+  min-height: 120px;
+  resize: vertical;
+}
+
+/**
+ * Action Button Component Library
+ * -----------------------------------------------------------------------------------
+ * Manages button layout patterns for secondary/cancel actions and primary/submit flows.
+ */
+.btn-layout-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e1e32;
+  border: 1px solid #2f2f4f;
+  color: #a1a5b7;
+  @include spacing(px, 24);
+  @include spacing(py, 10);
+  @include radius(8px);
+  font-size: map-get($font-sizes, '14');
+  font-weight: map-get($font-weights, 'medium');
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #25253d;
+    color: var(--text-white);
+  }
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  @include spacing(px, 16);
+  @include spacing(py, 10);
+  @include radius(8px);
+  font-size: map-get($font-sizes, '14');
+  font-weight: map-get($font-weights, 'semibold');
+  @include hover-zoom(1.03); 
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+/**
+ * Global Animation Registry
+ * -----------------------------------------------------------------------------------
+ * Defines standard entrance transitions for UI modules to ensure fluid user experiences.
+ */
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/**
+ * Shared Search Box Primitive
+ * -----------------------------------------------------------------------------------
+ * Encapsulates search-input styling consistent across navigation and data grid blocks.
+ */
+.search-box {
+  width: 100%;
+  background: var(--bg-active);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  @include radius(6px);
+  position: relative;
+  @include flex-center;
+  @include spacing(px, 12);
+  @include spacing(py, 6);
+  @include transition(all); 
+
+  &:focus-within {
+    border-color: $green-500; 
+    @include shadow-sm
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+    border: none; 
+    background: transparent;
+    color: var(--text-white);
+    font-size: map-get($font-sizes, '14');
+    outline: none;
+    @include spacing(p, 0); 
+
+    &::placeholder {
+      color: var(--text-white);
+      opacity: 0.5;
+    }
+
+    &::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+    }
+  }
+}

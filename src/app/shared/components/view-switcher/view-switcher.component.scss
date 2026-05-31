@@ -1,0 +1,48 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+/**
+ * View Switcher Zone Container
+ * ---------------------------------------------------------
+ * Acts as a segmented control track housing layout action buttons.
+ * Uses a dynamic dark inner surface canvas paired with alpha-blended borders
+ * to separate the controller context from the primary card layer.
+ */
+.view-switcher-zone {
+  background: var(--bg-main); // Embedded dark system background canvas track
+  @include radius(6px);
+  @include border($color: rgba($white, 0.05)); // Adaptive high-end micro contrast border stroke
+
+  // Responsive alignment guard block for widescreen presentation layouts
+  @include respond-to('lg') {
+    align-self: auto; // Resets flex layout stretch parameters back to standard baseline flow
+  }
+
+  /**
+   * Segmented Option Switch Trigger (Button Base)
+   * Handles interactive semantic transitions for layout representation modes.
+   */
+  .btn-switch {
+    border: none;
+    background: transparent; // Default flush layout appearance inside the track
+    color: var(--text-muted);
+    @include spacing(px, 12);
+    @include spacing(py, 6);
+    @include radius(4px);
+    font-size: map-get($font-sizes, '14');
+    font-weight: map-get($font-weights, medium);
+    @include transition(all); // Smooth hardware-accelerated state transitions
+
+    // Hover Interaction State
+    &:hover { 
+      color: var(--text-white); 
+    }
+
+    // Active Toggle Representation Context State
+    &.active {
+      background: var(--bg-active); // Deep selected surface layer tint
+      color: $green-500; // Highlights current mode using branding color tokens
+      font-weight: map-get($font-weights, semibold); // Elevates typography visual hierarchy
+    }
+  }
+}

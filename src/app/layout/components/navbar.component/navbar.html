@@ -1,0 +1,55 @@
+<nav class="navbar-wrapper glass-effect flex-between px-24" role="navigation" aria-label="Main Top Navigation">
+  <!-- Mobile menu toggle button and brand logo for small screens -->
+  <div class="flex-center gap-12 d-lg-none">
+    <button 
+      class="mobile-menu-btn click-shrink" 
+      [attr.aria-expanded]="layoutService.isSidebarOpen()"
+      aria-controls="main-sidebar"
+      aria-label="Toggle mobile navigation menu"
+      (click)="layoutService.toggleSidebar()">
+      <span class="ic-base ic-menu ic-s24 text-main cursor-pointer"></span>
+    </button>
+    <h1 class="brand-logo" aria-label="NEXUS Dashboard Home">NEXUS</h1>
+  </div>
+  <!-- Search input container -->
+  <div class="title">
+    <h1 class="fs-18 fw-bold text-main">NEXUS Dashboard</h1>
+  </div>
+  <!-- Navbar actions including theme toggle, language switcher, and user profile -->
+  <div class="navbar-actions flex-center gap-20">
+    <!-- Theme toggle button (light/dark mode) --> 
+    <button 
+      (click)="themeService.toggleTheme()" 
+      class="theme-toggle-btn " 
+      [aria-label]="'Switch to ' + (this.themeService.theme() === 'light' ? 'dark' : 'light') + ' mode'">
+      <span class="fs-20 " aria-hidden="true">{{themeIcon}}</span>
+    </button>
+    <!--Reusable dropdown component for language selection.-->
+    <app-dropdown 
+      [items]="languages" 
+      [selectedValue]="languageService.lang()"
+      (selectionChange)="selectLang($event)">
+    </app-dropdown>
+    <!-- User profile with avatar and name, opens account settings -->
+    <div 
+      class="user-profile-wrapper flex-center gap-10 cursor-pointer" 
+      role="button" 
+      aria-haspopup="true" 
+      aria-label="User profile and account settings">
+      <!-- Display user name and role on large screens -->
+      <div class="user-info d-none d-lg-flex flex-column text-logic-end">
+        <p class="user-name fw-bold fs-14">Khaled Shallaby</p> 
+        <span class="user-role fs-12 text-muted">Super Admin</span> 
+      </div>
+      <!-- User user image -->
+      <div class="user-image">
+        <img 
+          src="/assets/images/khaled.jpeg" 
+          alt="Profile picture of Khaled Shallaby" 
+          class="bg-cover ic-s32 rounded-circle" />
+      </div>
+      <span class="ic-base bg-cover ic-s16 text-main ic-sortDown" aria-hidden="true"></span>
+    </div>
+
+  </div>
+</nav>

@@ -1,0 +1,59 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+.filter-section-wrapper {
+  // Page Meta Typography Elements Styling
+  .page-title {
+    color: var(--text-main);
+  }
+  .page-subtitle {
+    color: var(--text-muted);
+  }
+
+  // Primary Global Action Trigger
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    @include spacing(gap, 8);
+    @include spacing(px, 16);
+    @include spacing(py, 10);
+    @include radius(8px);
+    font-size: map-get($font-sizes, '14');
+    font-weight: map-get($font-weights, 'semibold');
+    @include hover-zoom(1.05);
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    .icon {
+      display: inline-block;
+    }
+  }
+
+  // Centralized Compact Core Filter Card
+  .filter-bar-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.05); // Subtle elevation stroke split
+    @include radius(12px);
+    @include shadow-md; // Clean dashboard visual depth elevation layer
+    @include spacing(p, 16);
+
+    // Forces clean row boundary containment without horizontal overflows
+    .row {
+      margin: 0 !important; 
+    }
+
+    // Input Descriptor Label Global Styling Specs
+    .form-label {
+      font-size: map-get($font-sizes, '12');
+      font-weight: map-get($font-weights, 'medium');
+      color: var(--text-muted);
+    }
+
+    // Async state component placeholder context
+    .dropdown-placeholder-loading {
+      font-size: map-get($font-sizes, '13');
+      color: var(--text-muted);
+    }
+  }
+}

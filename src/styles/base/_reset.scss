@@ -1,0 +1,68 @@
+/* --- GLOBAL RESET --- */
+
+/* 1. Box sizing */
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Prevent transitions on load */
+.no-transition * {
+  transition: none !important;
+}
+
+/* 3. Links */
+a {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* 4. Lists */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* 5. Images */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* 6. Forms */
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Accessibility focus */
+:focus-visible {
+          outline: none;
+        box-shadow: none;
+}
+
+
+/* Button reset */
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Typography reset */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  padding: 0;
+}

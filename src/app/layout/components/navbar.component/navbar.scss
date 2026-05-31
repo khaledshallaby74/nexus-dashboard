@@ -1,0 +1,111 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+/**
+ * Navbar Main Wrapper
+ * Features: Sticky positioning, theme-based background, and border integration
+ */
+.navbar-wrapper {
+  position: fixed;
+  width: stretch;
+  top: 0;
+  height: $navbar-height; 
+  background: var(--bg-card);
+  @include border(bottom);
+  z-index: map-get($z-index, 'sticky' );
+  /** Brand Logo Styling */
+  .brand-logo {
+    font-size: map-get($font-sizes, '20');
+    font-weight: map-get($font-weights, bold);
+  }
+  /** Search Input Container - Hidden on mobile devices (lg and down) */
+  .title {
+    @include respond-to('lg', 'down'){
+      display: none;
+    }
+  }
+  .theme-toggle-btn{
+    @include hover-zoom(1.15);
+  }
+  /** * Language Switcher Component
+   * Pill-shaped container with interactive language toggle buttons 
+  */
+.lang-dropdown-container {
+  position: relative; // الأساس عشان المنيو تظهر تحته بالظبط
+  display: inline-block;
+
+  .btn-lang-trigger {
+    @include flex-center;
+    @include spacing(px, 12);
+    @include spacing(py, 6);
+    @include spacing(g, 8);
+    @include border;
+    @include radius(8px);
+    @include smooth-transition(all);
+    background: var(--bg-card);
+    cursor: pointer;
+    min-width: 65px;
+
+    .ic-sortDown {
+      @include smooth-transition(transform, 0.3s);
+      &.rotated { transform: rotate(180deg); } // حركة السهم لما المنيو تفتح
+    }
+
+    &:hover {
+      border-color: var(--primary);
+      background: var(--bg-main);
+    }
+  }
+
+  .lang-menu-card {
+    position: absolute;
+    top: calc(100% + 8px); // مسافة سينيور بين الزرار والمنيو
+    right: 0; // محاذات لليمين (تقدر تغيرها لـ left لو حابب)
+    min-width: 120px;
+    background: var(--bg-card);
+    @include border;
+    @include radius(10px);
+    @include shadow-hover; // الميكسن بتاع الرفع والظل
+    z-index: z(dropdown);
+    overflow: hidden;
+    padding: 6px;
+
+    // Animation Entry
+    &.fade-in {
+      animation: dropdown-pop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .menu-item {
+      @include flex-between;
+      @include spacing(px, 12);
+      @include spacing(py, 8);
+      @include radius(6px);
+      @include smooth-transition(background);
+      width: 100%;
+      cursor: pointer;
+      color: var(--text-main);
+      
+      &:hover {
+        background: var(--bg-main);
+        color: var(--primary);
+      }
+
+      &.active {
+        background: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary);
+      }
+    }
+  }
+}
+/** Professional Keyframes for that "Pop" effect */
+@keyframes dropdown-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+}

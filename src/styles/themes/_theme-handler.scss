@@ -1,0 +1,9 @@
+/* THEMES/THEME-HANDLER
+   Aggregates theme files and handles the global transitions.
+*/
+/* --- THEME INITIALIZATION --- */
+
+// Imports: Loading Light (Default) and Dark theme variables
+@use 'light';
+@use 'dark';
+

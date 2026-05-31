@@ -1,0 +1,51 @@
+<!-- Accessible Sidebar: Marked as aside for semantic SEO -->
+<aside class="sidebar-container d-flex flex-column gap-3 glass-effect px-3" 
+        [class.is-collapsed]="layoutService.isCollapsed()"
+        aria-label="Sidebar Navigation">
+    <!-- Sidebar Header: Contains Branding and Toggle triggers -->
+    <div class="sidebar-header flex-between p-4">
+        <div class="logo-wrapper flex-center gap-10">
+            <!-- Mini-logo shown only when sidebar is collapsed -->
+            <span
+                [ngClass]="layoutService.isCollapsed() ? 'd-flex' : 'd-none'"
+                class="logo ic-base ic-logo bg-cover text-main ic-s20 me-4">
+            </span>
+            <h1 class="fs-18 fw-bold text-main">NEXUS</h1>
+        </div>
+        <!-- Toggle button: Icon switches between Arrow and Close based on state -->
+        <span (click)="layoutService.toggleSidebar()"
+              class="ic-base ic-close ic-s20 bg-cover cursor-pointer"
+              [ngClass]="layoutService.isCollapsed() ? ['ic-arrowRight', 'open', 'flip-rtl'] : 'ic-close'"
+              aria-label="Toggle Sidebar">
+        </span>
+    </div>
+    <!-- Mobile Search: Accessible only on mobile view as per design requirements -->
+    <div class="sidebar-search px-3 py-2 d-lg-none d-md-block">
+        <div class="search-box">
+            <span class="ic-base ic-search bg-cover ic-s16 me-4"></span>
+            <input 
+                type="text" 
+                [attr.aria-label]="'SIDEBAR.LABELS.SEARCH_HINT' | translate"
+                [placeholder]="'SIDEBAR.LABELS.SEARCH_HINT' | translate">
+        </div>
+    </div>
+    <!-- Dynamic Navigation Content: Renders groups and items from component logic -->
+    <div class="sidebar-content py-3 px-4">
+        @for(group of menuGroups; track group.groupName){
+            <div class="nav-group mb-4">
+                <p class="fw-bold text-main fs-12 mb-3">{{group.groupName | translate}}</p>
+                <ul class="d-flex flex-column gap-3">
+                    @for(item of group.items; track item.route){
+                        <li class="nav-item">
+                            <!-- RouterLinkActive automatically handles the 'active-link' class based on URL -->
+                            <a class="nav-link d-flex gap-3 mb-2" [routerLink]="item.route" routerLinkActive="active-link">
+                                <span class="ic-base bg-cover ic-s20 text-main flex-shrink-0" [ngClass]="item.icon"></span>
+                                <span class="fs-14 fw-medium text-main nav-label">{{item.label | translate}}</span>
+                            </a>
+                    </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</aside>

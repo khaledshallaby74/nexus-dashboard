@@ -1,0 +1,173 @@
+/* =========================================================
+   SHADOWS: Elevation and depth management
+========================================================= */
+@use '../abstract/mixins' as *;
+
+// Standard medium elevation for cards or floating elements
+.shadow-medium {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+// Hoverable shadow that triggers smooth transition effects
+.shadow-hover {
+  @include transition(box-shadow, transform);
+
+  &:hover {
+    @include hover-lift; // Utilizes central mixin for consistent depth
+  }
+}
+.hover-zoom {
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* =========================================================
+   THEME TRANSITIONS: Smooth Light/Dark mode switching
+========================================================= */
+
+// Mixin to apply standard theme-aware transition properties
+@mixin theme-transition {
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease;
+}
+
+// Global class for individual elements requiring theme transitions
+.theme-transition-el {
+  @include smooth-transition((background-color, color, border-color, box-shadow));
+}
+
+// Catch-all wrapper to ensure all nested elements transition smoothly between themes
+.theme-transition-wrapper *,
+.theme-transition-wrapper *::before,
+.theme-transition-wrapper *::after {
+  transition: 
+    background-color var(--theme-transition),
+    color var(--theme-transition),
+    border-color var(--theme-transition),
+    box-shadow var(--theme-transition);
+}
+
+/* =========================================================
+   INTERACTIONS: Tactile feedback for user actions
+========================================================= */
+
+// Combined hover lift and active "press" effect for interactive cards
+.pop-out-hover {
+  @include transition(transform, box-shadow);
+
+  &:hover {
+    @include hover-lift;
+    @include active-press
+  }
+}
+
+// Subtle shrink effect for buttons or icons on click
+.click-shrink {
+  @include transition(transform);
+    @include active-press;
+}
+
+// Utility to disable interactions and visually dim elements
+.disable-layer {
+  opacity: 0.6;
+  pointer-events: none; // Blocks mouse events
+  filter: grayscale(1); // Visual cue for inactive state
+}
+
+// Standard cursor helper
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* =========================================================
+   ANIMATIONS: Entrance and state change effects
+========================================================= */
+
+.transition {
+  @include transition(all);
+}
+
+// Standard fade-in entrance with a slight upward slide
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); // Starts slightly below its final position
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   EFFECTS: Modern UI styling
+========================================================= */
+
+// Frosted glass effect using backdrop-filter
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px); // Modern glassmorphism blur
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   TEXT: Typography management
+========================================================= */
+
+// Multi-line text truncation utility (Limited to 2 lines)
+.text-truncate-custom {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+// Logical alignment for RTL/LTR support
+.text-logic-end {
+  text-align: end !important;
+}
+
+/* =========================================================
+   STATE EFFECTS: Specific styles for active/hover states
+========================================================= */
+
+// Highlight effect for active pills or tabs
+.active-pill-effect {
+  @include hover-lift;;
+  @include border;
+  @include radius(8px);
+
+  background: var(--bg-card);
+  border-color: var(--primary);
+
+  @include transition(transform, box-shadow, border-color);
+}
+
+// Hover state for interactive pills or list items
+.hover-pill-effect {
+  @include hover-lift;;
+  @include border;
+  @include radius(8px);
+
+  background: var(--bg-card);
+  border-color: var(--primary);
+
+  @include transition(transform, box-shadow);
+}
+
+/* =========================================================
+   RTL: Directional adjustments
+========================================================= */
+
+[dir='rtl'] {
+  // Flips icons or elements horizontally for Arabic layout
+  .flip-rtl {
+    transform: scaleX(-1);
+  }
+}

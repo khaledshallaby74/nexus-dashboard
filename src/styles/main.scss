@@ -1,0 +1,62 @@
+/**
+ * MAIN STYLE ENTRY
+ * ---------------------------------------------------------
+ * Global assembly point for SCSS modules following the 7-1 Architecture.
+ * This file orchestrates the import order to ensure proper cascading and variable overrides.
+ */
+
+/* 1. ABSTRACTS: Configuration & Tools (No direct CSS output) */
+@use 'abstract/variables' as *;
+@use 'abstract/mixins' as *;
+@use 'abstract/functions' as *;
+@use 'abstract/icons' as *;
+
+/* 2. VENDORS: Third-party overrides (Bootstrap Integration) */
+// Overriding Bootstrap's default variables with our Design System tokens
+$primary: $blue-500;
+$success: $success;
+$danger:  $error;
+@use 'bootstrap/scss/bootstrap';
+
+/* 3. BASE: Global Resets & Elements */
+@use 'base/reset';
+@use 'base/typography';
+
+/* 4. THEMES: Logic for Dark/Light mode switching */
+@use 'themes/theme-handler';
+
+/* 5. UTILITIES: Atomic classes for rapid development */
+@use 'utilities/images';
+@use 'utilities/flex';
+@use 'utilities/spacing';
+@use 'utilities/helpers';
+@use 'utilities/colors';
+
+/* 6. COMPONENTS: Reusable UI patterns for NEXUS dashboard */
+@use 'components/card';
+@use 'components/form';
+@use 'components/table';
+@use 'components/toast';
+@use 'components/spinner';
+@use 'components/filter-bar';
+
+
+/**
+ * Global Root Configuration:
+ * Applies base styles to the body while leveraging CSS Variables for theming.
+ */
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--main-font);
+    direction: var(--main-dir); // Dynamic support for RTL/LTR
+    min-height: 100vh;
+    line-height: 1.5;
+    
+    // Applying custom scrollbar mixin for a polished look
+    @include scrollbar; 
+    
+    overflow-x: hidden; // Prevents horizontal jitter
+    -webkit-font-smoothing: antialiased; // Optimized font rendering
+    -moz-osx-font-smoothing: grayscale;
+}

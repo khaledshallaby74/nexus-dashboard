@@ -1,0 +1,85 @@
+/* --- COLOR PALETTE: DESIGN SYSTEM  --- */
+
+// 1. Blue Scale (Primary Brand Colors)
+$blue-500: #3b82f6; // Primary Action Color
+$blue-600: #2563eb; // Primary Dark / Hover State
+
+// 2. Gray Scale (Neutral Shades for UI Structure)
+$gray-50:  #f9fafb; // Light Surface / Background
+$gray-100: #f3f4f6; // Secondary Background / Input Field
+$gray-200: #e5e7eb; // Subtle Borders
+$gray-400: #9ca3af; // Muted Text / Placeholder
+$gray-700: #374151; // Strong Borders / Hover States
+$gray-800: #1f2937; // Dark Mode Cards / Elevation
+$gray-900: #111827; // Dark Mode Body Background
+$gray-1000: #020617;
+$green-500: #10b981;
+
+// 3. Global Neutrals & Status Colors
+$white:   #ffffff;
+$success: $green-500; // Positive feedback / Success states
+$error:   #ef4444; // Destructive actions / Error states
+$warning : #f59e0b;
+
+/* --- TYPOGRAPHY: CORE FONTS --- */
+$font-en: 'Inter', sans-serif;           // Default English Typography
+$font-ar: 'Montserrat-Arabic', sans-serif; // Specialized Arabic Typography
+
+
+/* ---  FONT SIZES AND WEIGHTS --- */
+$font-sizes: (
+    '12' : 0.75rem,
+    '14' : 0.875rem,
+    '16' : 1rem,
+    '18' : 1.125rem,
+    '20' : 1.25rem,
+    '24' : 1.5rem,
+    '28' : 1.75rem,
+    '32' : 2rem
+);
+$font-weights: (
+    'regular' : 400,
+    'medium' : 500,
+    'semibold' : 600,
+    'bold' : 700,
+    'extrabold' : 800
+);
+
+
+/* SPACING */
+$spacings: (
+  '2' : 0.125rem,
+  '4': 0.25rem,
+  '6' : 0.375rem,
+  '8': 0.5rem,
+  '10': 0.625rem,
+  '12': 0.75rem,
+  '14' : 0.875rem,
+  '16': 1rem,
+  '20': 1.25rem,
+  '24': 1.5rem,
+  '32': 2rem,
+  '48': 3rem
+);
+
+/* BREAKPOINTS */
+$breakpoints: (
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px,
+  'xxl': 1400px
+);
+
+/* Z-INDEX */
+$z-index: (
+  sticky: 1020,
+  fixed: 1030,
+  dropdown: 1040,
+  modal: 1050
+);
+
+
+
+/* --- LAYOUT CONFIGURATION --- */
+$navbar-height: 70px; // Global header height reference

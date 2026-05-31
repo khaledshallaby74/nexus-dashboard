@@ -1,0 +1,85 @@
+<!-- Container for the entire form page with a fade-in animation -->
+<div class="form-page-container animate-fade-in">
+  
+  <!-- Page Header: Displays the form title and optional subtitle, translated if needed -->
+  <header class="form-page-header mb-20">
+    <h1 class="page-title fs-24 fw-bold mb-1">
+      {{ config().title | translate }}
+    </h1>
+    @if (config().subtitle) {
+      <p class="page-subtitle fs-14 text-muted mb-0">
+        {{ config().subtitle! | translate }}
+      </p>
+    }
+  </header>
+
+  <!-- Main Card Wrapper that holds the dynamic form -->
+  <div class="form-card-wrapper">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dynamic-form-wrapper">
+      <div class="row g-4">
+        
+        <!-- Loop through each field configuration from the config object -->
+        @for (field of config().fields; track field.key) {
+          <!-- Column span: Use field's colSpan if provided; fallback to col-12 for textarea, col-md-6 for others -->
+          <div [ngClass]="field.colSpan ? field.colSpan : (field.type === 'textarea' ? 'col-12' : 'col-md-6')">
+            <div class="form-group-field d-flex flex-column gap-1">
+              
+              <!-- Field Label: Bound to the field key for accessibility -->
+              <label class="form-label mb-1" [for]="field.key">
+                {{ field.label | translate }}
+              </label>
+              
+              <!-- Text or Number Input Field -->
+              @if (field.type === 'text' || field.type === 'number') {
+                <input [type]="field.type" 
+                       [id]="field.key" 
+                       [formControlName]="field.key"
+                       class="form-control-custom" 
+                       [placeholder]="field.placeholder ? (field.placeholder | translate) : ''">
+              }
+
+              <!-- Textarea Field: Larger input area for longer text -->
+              @if (field.type === 'textarea') {
+                <textarea [id]="field.key" 
+                          [formControlName]="field.key" 
+                          rows="4"
+                          class="form-control-custom textarea-custom" 
+                          [placeholder]="field.placeholder ? (field.placeholder | translate) : ''"></textarea>
+              }
+
+              <!-- Select / Dropdown Field: Uses a custom dropdown component -->
+              @if (field.type === 'select') {
+                <app-dropdown 
+                  [items]="field.options || []" 
+                  [selectedValue]="form.get(field.key)?.value",
+                  [placeholder]="'PRODUCT.PLACEHOLDERS.SELECT_OPTION' | translate"
+                  (selectionChange)="onDropdownSelectionChange(field.key, $event)">
+                </app-dropdown>
+              }
+
+              <!-- Validation Error Message: Shown when the field is touched and invalid -->
+              @if (form.get(field.key)?.touched && form.get(field.key)?.invalid) {
+                <span class="error-text fs-12 text-danger mt-1 animate-slide-down">
+                  {{ 'VALIDATION.REQUIRED' | translate }}
+                </span>
+              }
+
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <!-- Footer with Cancel and Save buttons -->
+      <footer class="form-actions-footer d-flex justify-content-end gap-3 mt-5">
+        <button type="button" class="btn-layout-cancel cursor-pointer" (click)="onCancel()">
+          {{ 'BUTTONS.CANCEL' | translate }}
+        </button>
+        <button type="submit" class="btn-add bg-green-500 cursor-pointer text-white border-0" [disabled]="form.invalid">
+          {{ config().saveButtonText | translate }}
+        </button>
+      </footer>
+    </form>
+  </div>
+
+</div>

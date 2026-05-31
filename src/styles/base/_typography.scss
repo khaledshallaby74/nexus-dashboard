@@ -1,0 +1,36 @@
+@use '/abstract/mixins' as *;
+@use '/abstract/variables' as *;
+
+:root {
+  --main-font: #{$font-en};
+  --main-dir: ltr;
+  --main-align: left;
+}
+
+[dir='rtl'] {
+  --main-font: #{$font-ar};
+  --main-dir: rtl;
+  --main-align: right;
+}
+
+/* Fonts */
+@include font-face('Inter', 400, 'inter', 'Inter-Regular');
+@include font-face('Inter', 500, 'inter', 'Inter-Medium');
+@include font-face('Inter', 600, 'inter', 'Inter-SemiBold');
+@include font-face('Inter', 700, 'inter', 'Inter-Bold');
+@include font-face('Inter', 800, 'inter', 'Inter-ExtraBold');
+
+@include font-face('Montserrat-Arabic', 400, 'montserrat', 'Montserrat-Regular');
+@include font-face('Montserrat-Arabic', 500, 'montserrat', 'Montserrat-Medium');
+@include font-face('Montserrat-Arabic', 600, 'montserrat', 'Montserrat-SemiBold');
+@include font-face('Montserrat-Arabic', 700, 'montserrat', 'Montserrat-Bold');
+@include font-face('Montserrat-Arabic', 800, 'montserrat', 'Montserrat-ExtraBold');
+
+/* Utilities */
+@each $s, $v in $font-sizes {
+  .fs-#{$s} { font-size: $v !important; }
+}
+
+@each $w, $v in $font-weights {
+  .fw-#{$w} { font-weight: $v !important; }
+}

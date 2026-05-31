@@ -1,0 +1,72 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+/**
+ * Enterprise Pagination Context Wrapper
+ * ---------------------------------------------------------
+ * Establishes a centered, full-width reactive container layout for 
+ * driving data table page state navigation controls.
+ */
+.pagination-container {
+  @include flex-center;
+  width: 100%;
+  @include spacing(py, 8);
+
+  /* Primary Boundary Controls (Prev / Next Action Triggers) */
+  .btn-pagination {
+    &.prev {
+      margin-inline-end: 12px; 
+    }
+    &.next {
+      margin-inline-start: 12px; 
+    }
+
+    // Defensive UX Tactic: Smooth styling for inert/locked navigation boundaries
+    &:disabled {
+      color: #475569 !important; // Muted fallback text color slate
+      cursor: not-allowed;       // Visual feedback indicating zero interactive capability
+    }
+  }
+
+  /* Centralized Numeric Page Navigation List Frame */
+  .pages-list {
+    @include flex-center;
+    @include spacing(gap, 6); // Employs responsive gap configuration parameters
+
+    /* Individual Iterative Page Item Tokens */
+    .page-number-item {
+      @include flex-center;
+      @include spacing(px, 12);
+      @include spacing(py, 2);
+      background: transparent;
+      @include radius(8px);
+      
+      font-size: map-get($font-sizes, '14');
+      font-weight: map-get($font-weights, 'medium');
+      @include transition(color, background-color, border-color);
+
+      // Micro-interaction constraint preventing redundant styling triggers on the active page
+      &:hover:not(.active) {
+        color: var(--text-white) !important;
+      }
+
+      // Senior UX Tactic: Highlights the current page state with the glowing neon brand aesthetic
+      &.active {
+        background-color: var(--bg-active);
+        color: $green-500 !important; // Structural brand accent tone
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        font-weight: map-get($font-weights, 'bold');
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.1); // Dynamic neon depth glow effect
+      }
+    }
+
+    /* Isolated Structural Truncation Dots (...) Selector */
+    .pagination-dots {
+      @include flex-center;
+      color: var(--text-muted);
+      font-size: map-get($font-sizes, '14');
+      user-select: none; // Defensive guard to prevent accidental user selection highlight blocks
+      cursor: default;
+    }
+  }
+}
