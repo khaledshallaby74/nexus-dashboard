@@ -1,0 +1,100 @@
+@use '../../../../styles/abstract/mixins' as *;
+@use '../../../../styles/abstract/variables' as *;
+
+/**
+ * Toast Notification Viewport Overlay
+ * -----------------------------------------------------------------------------------
+ * Fixed-position structural wrapper that orchestrates notification stack positioning 
+ * and pointer event propagation within the application layout.
+ */
+:host {
+  position: fixed;
+  inset-block-start: 16px; 
+  inset-inline-start: 50%; 
+  transform: translateX(-50%); 
+  z-index: map-get($z-index, 'sticky') + 1000; 
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px; 
+  pointer-events: none; 
+}
+
+/**
+ * Toast Card Surface Specification
+ * -----------------------------------------------------------------------------------
+ * The visual container for notification entities. Defines theme-aware backgrounds,
+ * elevation, and high-performance animation entry sequences.
+ */
+.toast-card {
+  min-width: 300px;
+  max-width: 500px;
+  pointer-events: auto; 
+  @include flex-start;
+  background-color: var(--bg-active); 
+  @include spacing(py, 14); 
+  @include spacing(px, 20);
+  @include radius(12px);
+  @include toast-shadow;
+
+  /* Entrance animation sequence using spring-like cubic-bezier ease */
+  animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform, opacity;
+
+  &.success {
+    .toast-icon { color: $green-500; }
+  }
+
+  &.error {
+    .toast-icon { color: $error; }
+  }
+
+  .toast-message {
+    @include flex-center;
+    font-size: map-get($font-sizes, '14');
+    font-weight: map-get($font-weights, 'medium');
+    line-height: 1.4; 
+    flex-grow: 1;
+    letter-spacing: 0.3px;
+  }
+
+  .toast-close-btn {
+    cursor: pointer;
+    @include flex-center;
+    line-height: 1;
+    @include spacing(ps, 8);
+  }
+}
+
+/**
+ * Mobile-First Adaptive Layout
+ * -----------------------------------------------------------------------------------
+ * Forces notification stacking to full-width viewport behavior on small screen devices.
+ */
+@include respond-to('sm', 'down') {
+  :host {
+    inset-block-start: 16px;
+    inset-inline: 16px;
+    transform: none;
+  }
+  .toast-card {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+/**
+ * Entrance Animation Keyframes
+ * -----------------------------------------------------------------------------------
+ * Manages the slide-in and fade-in transition lifecycle for notification components.
+ */
+@keyframes slideDown {
+  from {
+    transform: translateY(-60px) ;
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

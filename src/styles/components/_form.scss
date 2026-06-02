@@ -56,7 +56,7 @@
   @include spacing(py, 6);
   font-size: map-get($font-sizes, '14');
   outline: none;
-  color: #ffffff !important; 
+  color: var(--text-white) ;
   @include transition(all); 
 
   /* Focus: Active state with semantic green theme activation */

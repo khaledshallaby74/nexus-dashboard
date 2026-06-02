@@ -5,6 +5,7 @@ import { NavbarComponent } from '../components/navbar.component/navbar';
 import { SidebarComponent } from '../components/sidebar.component/sidebar.component';
 import { LoadingService } from '../../core/services/loading/loading.service';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
+import { ToastComponent } from '../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-admin-layout',

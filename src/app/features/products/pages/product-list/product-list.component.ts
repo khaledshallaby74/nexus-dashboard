@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { Router } from '@angular/router';
 import { ProductFilterBarComponent } from '../../components/product-filter-bar/product-filter-bar.component';
@@ -10,6 +10,7 @@ import { ProductsService } from '../../services/products.service';
 import { Product } from '../../models/product';
 import { GenericCardComponent } from '../../../../shared/components/generic-card/generic-card.component';
 import { TableColumnConfig } from '../../../../shared/models/table.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Enterprise Product Management Orchestrator Component
@@ -40,6 +41,8 @@ export class ProductListComponent implements OnInit {
   
   /** Framework routing engine utilized to dispatch explicit programmatic view layout traversals */
   private router = inject(Router);
+
+  private destroyRef = inject(DestroyRef);  
 
   /** Structural matrix properties map configuring cell layout headers and i18n localization keys */
   protected tableConfig: TableColumnConfig[] = [
@@ -95,7 +98,7 @@ export class ProductListComponent implements OnInit {
    * ---------------------------------------------------------------------------------
    * Intercepts downstream abstract event emissions, extracts target primary keys, 
    * and branches execution flows into either structural deletion pipelines or deep-link update layouts.
-   * * @param action Intent token mapping the nature of requested mutation
+   * @param action Intent token mapping the nature of requested mutation
    * @param product Bound target entity context providing unique identifier states
    */
   protected onProductAction(action: 'edit' | 'delete', product: Product): void {
@@ -103,6 +106,17 @@ export class ProductListComponent implements OnInit {
       // Transition viewport state into dedicated inline asset rehydration context matrices
       this.router.navigate(['/products/edit', product.id]);
     } else if (action === 'delete') {
-      console.log('Trigger Delete Flow for ID:', product.id);    }
+      /** Native confirmation gate to prevent accidental record permanent erasure */
+      const isConfirmed = confirm('Are you sure you want to delete this product?');
+    
+      if (isConfirmed) {
+        /** * Execution pipeline: Delegates the delete command to the reactive service layer.
+         * Utilizes takeUntilDestroyed to ensure stream disposal upon component lifecycle termination.
+         */
+        this.productsService.deleteProduct(product.id)
+          .pipe(takeUntilDestroyed(this.destroyRef)) 
+          .subscribe();
+      }   
+    }
   }
 }

@@ -1,217 +1,184 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Product, ProductResponse } from '../models/product';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { DropdownItem } from '../../../shared/models/dropdown.model';
 import { TableColumnConfig } from '../../../shared/models/table.model';
 
 /**
- * Enterprise Core Product State Machine Service
+ * Enterprise Product Service Layer
  * -----------------------------------------------------------------------------------
- * Centralizes global state management architectural patterns for the product catalog domain.
- * Governs active data streams, declarative layout configurations, dynamic server-side 
- * filtering parameters, and asynchronous caching operations utilizing Angular Signals and RxJS.
+ * Manages the domain state for products, including normalized entity mapping,
+ * reactive filtering, and CRUD operation pipelines.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
-  /** Injected framework network module token driving core data mutations */
   private http = inject(HttpClient);
-  
-  /** Base microservice resource pathway endpoint suffix boundary */
   private endPoints = 'products';
 
-  // --- Core State Encapsulation (Private Single Source of Truth) ---
+  // --- State Signals ---
   
-  /** Dynamic localized database cache acting as the baseline source of truth */
+  /** Primary stream of the current paginated product list */
   private productsState = signal<Product[]>([]);
   
-  /** In-memory dictionary bucket caching raw string taxonomy categories from the backend */
+  /** * Normalized entity cache (Map-like structure).
+   * Enables O(1) time complexity for record retrieval by primary key.
+   */
+  private productEntities = signal<Record<number, Product>>({});
+  
+  /** Taxonomy registry for filtering context */
   private categoriesState = signal<string[]>([]);
-  
-  // --- Public Read-Write Layout UI State Signals ---
-  
-  /** Toggles active master rendering blueprints between row-based sheets and structural matrices */
-  viewMode = signal<'table' | 'cards'>('table'); 
-  
-  /** Grand total metric reflecting complete backend repository items availability weights */
-  totalItems = signal<number>(0); 
-  
-  /** Paging capacity boundary specifying target record row limit slices per page initialization */
-  limitState = signal<number>(10); 
-  
-  /** Progressive active sequence tracking structural index pages */
-  currentPage = signal<number>(1); 
 
-  /** Target matching query sequence string applied directly onto dynamic criteria bounds */
+  // --- UI State Management ---
+  
+  /** Layout projection mode toggle */
+  viewMode = signal<'table' | 'cards'>('table');
+  
+  /** Total record count for pagination boundary calculations */
+  totalItems = signal<number>(0);
+  
+  /** Records per slice constraint */
+  limitState = signal<number>(10);
+  
+  /** Current pagination page index cursor */
+  currentPage = signal<number>(1);
+  
+  /** Current text search predicate */
   searchQuery = signal<string>('');
   
-  /** Active selection filter criteria isolating context representations */
+  /** Currently selected taxonomy filter */
   selectedCategory = signal<string>('');
 
-  /** Automatically derives index offset calculation matrices reactively upon page or limit modifications */
-  skipState = computed(() => (this.currentPage() - 1) * this.limitState()); 
-
-  // --- Public Read-Only Derived Selectors ---
+  /** Derived pagination offset calculated from page index and slice limit */
+  skipState = computed(() => (this.currentPage() - 1) * this.limitState());
   
-  /** Exposed immutable projection stream driving downstream presentational interfaces safely */
+  /** Public interface for the active dataset */
   products = computed(() => this.productsState());
 
-  /**
-   * Senior Architectural Selector: Dynamic Selection Options Factory
-   * ---------------------------------------------------------------------------------
-   * Transforms raw structural category lookups into strongly-typed DropdownItem objects
-   * while prepending neutral reset layout states to ensure interface binding safeties.
+  /** * Transforms raw categories into dropdown-compliant objects.
+   * Prepends a global 'All' selection for filter resetting.
    */
   categories = computed<DropdownItem[]>(() => {
     const allOption: DropdownItem = { label: 'All Categories', value: 'All Categories' };
-    
-    const apiOptions = this.categoriesState().map(cat => ({
-      label: this.capitalize(cat),
-      value: cat 
-    }));
-
+    const apiOptions = this.categoriesState().map(cat => ({ label: this.capitalize(cat), value: cat }));
     return [allOption, ...apiOptions];
   });
 
-  /**
-   * Synchronizes active reactive criteria states to hydrate or re-fetch catalog dataset streams.
-   * Dynamically switches query routes between categories, text matches, and offset indices.
-   */
+  /** Retrieves a specific entity from the local normalized cache using O(1) lookup */
+  getProductById(id: string | null): Product | undefined {
+    if (!id) return undefined;
+    return this.productEntities()[+id];
+  }
+
+  /** Synchronizes product stream based on active filter and pagination states */
   loadProducts(): void {
-    let categoryPath = '';
     let apiEndPoint = this.endPoints;
-    
     if (this.selectedCategory() && this.selectedCategory() !== 'All Categories') {
-      categoryPath = `/category/${this.selectedCategory().toLowerCase()}`;
-      apiEndPoint = `${this.endPoints}${categoryPath}`;
-    }
-    else if (this.searchQuery()) {
+      apiEndPoint = `${this.endPoints}/category/${this.selectedCategory().toLowerCase()}`;
+    } else if (this.searchQuery()) {
       apiEndPoint = `${this.endPoints}/search`;
     }
-    
-    const queryParams = `?limit=${this.limitState()}&skip=${this.skipState()}${this.searchQuery() ? '&q=' + this.searchQuery() : ''}`;
-    const fullEndPoint = `${apiEndPoint}${queryParams}`;
-    
-    this.http.get<ProductResponse>(fullEndPoint).pipe(
+
+    const queryParams = `?limit=${this.limitState()}&skip=${this.skipState()}` + (this.searchQuery() ? `&q=${this.searchQuery()}` : '');
+
+    this.http.get<ProductResponse>(`${apiEndPoint}${queryParams}`).pipe(
       tap(res => {
         this.productsState.set(res.products);
+        const entityMap: Record<number, Product> = {};
+        res.products.forEach(p => entityMap[p.id] = p);
+        // Sync local cache with remote result set
+        this.productEntities.update(current => ({ ...current, ...entityMap }));
         this.totalItems.set(res.total);
       })
-    ).subscribe(); 
-  }
-
-  /**
-   * Adjusts primary tracking index pages and fires subsequent endpoint synchronizations.
-   * @param page Expected progressive tracking sequence token
-   */
-  onPageChange(page: number): void {
-    this.currentPage.set(page); 
-    this.loadProducts(); 
-  }
-
-  /**
-   * Updates global structural presentation parameters.
-   * @param mode Target layout rendering signature style
-   */
-  toggleViewMode(mode: 'table' | 'cards') {
-    this.viewMode.set(mode);
-  }
-
-  /**
-   * Hits database taxonomy lookup endpoints to ingest and cache available raw category models.
-   */
-  loadCategories(): void {
-    this.http.get<string[]>(`${this.endPoints}/category-list`).pipe(
-      tap(res => this.categoriesState.set(res)) 
     ).subscribe();
   }
 
-  /**
-   * Centralized filter modification gate.
-   * Updates multiple criteria pointers simultaneously and resets pagination structures
-   * defensively back to standard initial bounds to prevent index clipping boundary anomalies.
-   * @param search Current input match target text
-   * @param category Current selected context classification tag
-   */
+  /** Lazy-loads a single entity from remote if not cached locally */
+  loadSingleProduct(id: string): void {
+    const numericId = +id;
+    if (this.productEntities()[numericId]) return;
+
+    this.http.get<Product>(`${this.endPoints}/${id}`).pipe(
+      tap(product => {
+        this.productEntities.update(state => ({ ...state, [product.id]: product }));
+      })
+    ).subscribe();
+  }
+
+  /** Fetches remote taxonomy registry for UI hydration */
+  loadCategories(): void {
+    this.http.get<string[]>(`${this.endPoints}/category-list`).pipe(
+      tap(res => this.categoriesState.set(res))
+    ).subscribe();
+  }
+
+  /** Performs optimistic creation of new products */
+  addProduct(productData: Record<string, any>): Observable<Product> {
+    return this.http.post<Product>(`${this.endPoints}/add`, productData).pipe(
+      tap(newProduct => {
+        this.productsState.update(curr => [newProduct, ...curr]);
+        this.productEntities.update(curr => ({ ...curr, [newProduct.id]: newProduct }));
+        this.totalItems.update(t => t + 1);
+      })
+    );
+  }
+
+  /** Updates existing entity with delta changes and synchronizes state */
+  updateProduct(id: number, productData: Record<string, any>): Observable<Product> {
+    return this.http.put<Product>(`${this.endPoints}/${id}`, productData).pipe(
+      tap(updated => {
+        this.productsState.update(curr => curr.map(p => p.id === id ? { ...p, ...updated } : p));
+        this.productEntities.update(curr => ({ ...curr, [id]: { ...curr[id], ...updated } }));
+      })
+    );
+  }
+
+  /** Deletes an entity and purges it from normalized state caches */
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.endPoints}/${id}`).pipe(
+      tap(() => {
+        this.productsState.update(curr => curr.filter(p => p.id !== id));
+        this.productEntities.update(curr => {
+          const updated = { ...curr };
+          delete updated[id];
+          return updated;
+        });
+        this.totalItems.update(total => Math.max(0, total - 1));
+      })
+    );
+  }
+
+  /** Resets page index and triggers new fetch cycle on filter mutation */
   updateFilters(search: string, category: string): void {
     this.searchQuery.set(search);
     this.selectedCategory.set(category);
-    this.currentPage.set(1); 
+    this.currentPage.set(1);
     this.loadProducts();
   }
 
-  /**
-   * Functional string transformation utility mapping text into Title Case format variants.
-   * @param str Raw string target
-   */
-  private capitalize(str: string): string {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    this.loadProducts();
   }
 
+  toggleViewMode(mode: 'table' | 'cards') { this.viewMode.set(mode); }
+  
+  private capitalize(str: string): string { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; }
+
   /**
-   * Senior Structural Grid Blueprint Generator
-   * ---------------------------------------------------------------------------------
-   * Calculates a uniform layout column definition matrix driven by active cache updates.
-   * Programmatically wires column names straight to internationalization JSON translation tokens.
+   * Computed column definition factory.
+   * Maps domain entity keys to translatable UI headers.
    */
   tableColumnsConfig = computed<TableColumnConfig[]>(() => {
-    const currentProducts = this.productsState();
-    if (currentProducts.length === 0) return [];
-
-    const orderedKeys = ['title', 'category', 'price', 'stock', 'edit', 'delete'];
-
-    return orderedKeys.map(key => {
-      let type: 'text' | 'badge' | 'actions' = 'text';
-      let labelKey = `TABLE.HEADERS.${key.toUpperCase()}`;
-
-      if (key === 'price' || key === 'stock') type = 'badge';
-      if (key === 'edit' || key === 'delete') type = 'actions';
-
-      return { 
-        key, 
-        label: labelKey, 
-        type 
-      };
-    });
+    const current = this.productsState();
+    if (!current.length) return [];
+    const keys = ['title', 'category', 'price', 'stock', 'edit', 'delete'];
+    return keys.map(key => ({
+      key,
+      label: `TABLE.HEADERS.${key.toUpperCase()}`,
+      type: (key === 'price' || key === 'stock') ? 'badge' : (key === 'edit' || key === 'delete') ? 'actions' : 'text'
+    }));
   });
-
-  /**
-   * Dispatches network creation requests to append new record entities onto servers.
-   * Automatically updates in-memory array structures linearly to enforce responsive UI states.
-   * @param productData Flat un-nested data model layout map harvested from presentation structures
-   */
-  addProduct(productData: Record<string, any>): void {
-    const addEndPoint = `${this.endPoints}/add`;
-
-    this.http.post<Product>(addEndPoint, productData).pipe(
-      tap(newProduct => {
-        // Enforce optimistic rendering behaviors by prepending newly declared entities upstream
-        this.productsState.update(currentProducts => [newProduct, ...currentProducts]);
-        this.totalItems.update(total => total + 1);
-      })
-    ).subscribe({
-      next: () => console.log('Product Added Successfully to DummyJSON Cached State!'),
-      error: (err) => console.error('Error adding product:', err)
-    });
-  }
-
-  /**
-   * Dispatches network adjustment mutations targeting specific historical database references.
-   * Performs real-time row projection array swap-outs inside localized states to reflect updates instantly.
-   * @param id Targeted primary key database index mapping the resource
-   * @param productData Modified collection payload mapping delta adjustments
-   */
-  updateProduct(id: number, productData: Record<string, any>): void {
-    this.http.put<Product>(`${this.endPoints}/${id}`, productData).pipe(
-      tap(updatedProduct => {
-        // Linearly scan active datasets and intercept matching key bounds to merge server-side confirmations
-        this.productsState.update(currentProducts => 
-          currentProducts.map(p => p.id === id ? { ...p, ...updatedProduct } : p)
-        );
-      })
-    ).subscribe();
-  }
 }

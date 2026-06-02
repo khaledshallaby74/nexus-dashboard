@@ -17,7 +17,6 @@
   <div class="form-card-wrapper">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dynamic-form-wrapper">
       <div class="row g-4">
-        
         <!-- Loop through each field configuration from the config object -->
         @for (field of config().fields; track field.key) {
           <!-- Column span: Use field's colSpan if provided; fallback to col-12 for textarea, col-md-6 for others -->

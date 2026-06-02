@@ -1,74 +1,124 @@
-import { HttpInterceptorFn } from "@angular/common/http";
+import { HttpInterceptorFn, HttpResponse } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
-import { catchError, finalize, throwError } from "rxjs";
+import { catchError, finalize, tap, throwError, timeout, TimeoutError } from "rxjs";
 import { inject } from "@angular/core";
-import { NotificationService } from "../services/notifications/notification.service";
+import { ToastService } from "../services/toast/toast.service"; 
 import { LoadingService } from "../services/loading/loading.service";
 
 /**
- * Functional Interceptor to handle API URL prefixing, global error handling, and core loading state.
+ * Global API Interceptor
+ * -----------------------------------------------------------------------------------
+ * Central orchestrator for HTTP lifecycle management:
+ * 1. Global Loading State (LoadingService).
+ * 2. Automated Notification Dispatch (ToastService).
+ * 3. Global Error Handling & Timeout Management.
+ * 4. URL Normalization.
  */
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-    // Access the base API URL from environment configuration
     const baseUrl = environment.baseUrl;
 
-    /**
-     * We only want to prepend the baseUrl and add headers to actual API calls.
-     * This prevents the interceptor from breaking i18n or local image loading.
-     */
+    // Skip interception for static assets and localization files
     if (req.url.includes('assets') || req.url.includes('i18n')) {
         return next(req);
     }
 
-    // Inject NotificationService to display error toasts
-    const notify = inject(NotificationService);
-    
-    // Inject LoadingService to centrally manage the active requests counter
+    const toastService = inject(ToastService);
     const loadingService = inject(LoadingService);
 
-    // Increment the active requests counter immediately when a valid API request is initiated
     loadingService.show();
 
-    /**
-     * Clone the outgoing request and prepend the base URL.
-     * Requests are immutable, so cloning is required to modify the URL.
-     */
+    // Map relative paths to absolute environment-defined base URL
     const apiReq = req.clone({
         url: `${baseUrl}/${req.url}`
     });
 
-    // Pass the cloned request to the next handler in the interceptor chain
     return next(apiReq).pipe(
+        // Enforce network strictness: 7s SLA for server responses
+        timeout(7000), 
+
+        /**
+         * Success Pipeline:
+         * Automated UI feedback for successful state mutations (POST, PUT, DELETE, PATCH).
+         */
+        tap((event) => {
+            if (event instanceof HttpResponse) {
+                const method = req.method;
+                
+                if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+                    
+                    // Priority 1: Backend-defined messages
+                    if (event.body && typeof event.body === 'object' && 'message' in event.body) {
+                        const msg = (event.body as any).message;
+                        if (msg && typeof msg === 'string') {
+                            toastService.success(msg);
+                            return;
+                        }
+                    }
+
+                    // Priority 2: Predictive entity naming (Heuristic approach)
+                    const relativeUrl = req.url.replace(baseUrl, '').replace(/^\/+/, ''); 
+                    const urlSegments = relativeUrl.split('/');
+                    
+                    let entityName = urlSegments[0] ? urlSegments[0].toLowerCase() : 'record';
+
+                    // Plural to Singular normalization logic
+                    if (entityName.includes('category') || entityName.endsWith('categories')) {
+                        entityName = 'category';
+                    } else if (entityName.endsWith('ies')) {
+                        entityName = entityName.slice(0, -3) + 'y';
+                    } else if (entityName.endsWith('s')) {
+                        entityName = entityName.slice(0, -1);
+                    }
+
+                    const formattedEntity = entityName.charAt(0).toUpperCase() + entityName.slice(1);
+
+                    // Dispatch centralized notification based on mutation type
+                    const actionMap: Record<string, string> = {
+                        'POST': 'created',
+                        'PUT': 'updated',
+                        'PATCH': 'updated',
+                        'DELETE': 'deleted'
+                    };
+                    
+                    toastService.success(`${formattedEntity} ${actionMap[method] || 'processed'} successfully!`);
+                }
+            }
+        }),
+
+        /**
+         * Global Error Pipeline:
+         * Standardizes cross-application error reporting and graceful termination.
+         */
         catchError((error) => {
-            /**
-             * Extract the error message. 
-             * Priority: Backend custom message > General error message > Fallback string.
-             */
-            let errorMessage = error.error?.message || error.message || 'An unknown error occurred!';
-            
-            // Handle network connectivity issues (Status 0)
-            if (error.status == 0) {
-                errorMessage = 'Check your internet connection.';
+            let errorMessage = 'An unexpected error occurred!';
+
+            if (error instanceof TimeoutError) {
+                errorMessage = 'The connection timed out. Please check your internet speed.';
+                toastService.warning(errorMessage);
+            } else if (error.status === 0) {
+                errorMessage = 'No internet connection detected. Please check your network.';
+                toastService.error(errorMessage);
+            } else {
+                errorMessage = error.error?.message || error.message || errorMessage;
+                
+                // Map common HTTP status codes to user-friendly messages
+                const statusMap: Record<number, string> = {
+                    500: 'Server error (500). Please try again later.',
+                    404: 'Requested resource not found (404).',
+                    401: 'Unauthorized session. Please login again.'
+                };
+                
+                errorMessage = statusMap[error.status] || errorMessage;
+                toastService.error(errorMessage);
             }
-            
-            // Handle server-side crashes where no specific message is returned
-            if (error.status == 500 && (!error.error?.message || !error.message)) {
-                errorMessage = 'Internal Server Error. Please try again later.';
-            }
-            
-            // Display the formatted error message via the notification service
-            notify.show(errorMessage);
-            
-            // Re-throw the error so it can be handled by the calling service if needed
+
             return throwError(() => error);
         }),
+
         /**
-         * The finalize operator acts as a bulletproof safeguard against state bugs.
-         * It is guaranteed to execute at the end of the request lifecycle,
-         * regardless of whether the stream succeeded or encountered an error.
+         * Lifecycle cleanup: Ensures the global loading indicator state is always reset.
          */
         finalize(() => {
-            // Decrement the active requests counter when the HTTP stream terminates
             loadingService.hide();
         })
     );

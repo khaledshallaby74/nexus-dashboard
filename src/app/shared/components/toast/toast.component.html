@@ -1,0 +1,27 @@
+<!-- Loop through all active toasts from the toast service -->
+@for (toast of toastService.toasts(); track toast.id) {
+  <!-- Toast card with dynamic styling based on toast type (success/warning/error) -->
+  <div class="toast-card" [ngClass]="toast.type">
+    <!-- Icon section: shows appropriate icon for each toast type -->
+    <div class="toast-icon-wrapper me-14 flex-center">
+      @if (toast.type === 'success') {
+        <!-- Success: checkmark circle icon -->
+        <span class="toast-icon ic-circle-check bg-cover ic-base ic-s20"></span>
+      } @else if (toast.type === 'warning') {
+        <!-- Warning: warning triangle icon -->
+        <span class="toast-icon ic-warning bg-cover ic-base ic-s20"></span> 
+      } @else {
+        <!-- Error/default: exclamation circle icon -->
+        <span class="toast-icon ic-circle-exclamation bg-cover ic-base ic-s20"></span>
+      }
+    </div>
+
+    <!-- Toast message text -->
+    <span class="toast-message">{{ toast.message }}</span>
+
+    <!-- Close button to dismiss this specific toast -->
+    <button class="toast-close-btn" (click)="toastService.clear(toast.id)">
+      <span class="hover-zoom toast-icon ic-xmark bg-cover ic-base ic-s20"></span>
+    </button>
+  </div>
+}

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, OnInit, effect, ChangeDetectorRef} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,11 +8,11 @@ import { DynamicDialogConfig } from '../../models/form.model';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 
 /**
- * Enterprise Dynamic Form View Orchestrator Component
+ * Dynamic Reactive Form Orchestrator
  * -----------------------------------------------------------------------------------
- * Automatically constructs and renders a context-aware Reactive Form structure 
- * bound dynamically via external declaration metadata inputs.
- * Integrates programmatic control state synchronization tailored for custom presentation components.
+ * A highly reusable, standalone component that renders forms based on provided 
+ * schema configurations. Handles reactive form building, validation cycles, 
+ * and data synchronization with OnPush change detection strategy.
  */
 @Component({
   selector: 'app-dynamic-form-page',
@@ -22,76 +23,88 @@ import { DropdownComponent } from '../dropdown/dropdown.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicFormPageComponent implements OnInit {
-  /** Injected reactive form creation toolkit provider */
-  private fb = inject(FormBuilder);
-  
-  /** Core routing engine utilized for system viewport layout traversal tracking */
-  private router = inject(Router);
 
-  /** Structural dynamic metadata blueprints defining the complete target form architecture boundary */
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  /** Configuration schema defining form fields, types, and validation rules */
   config = input.required<DynamicDialogConfig>();
   
-  /** Broadcasts the clean, normalized payload object map upstream once the form matrix satisfies validations */
-  submitForm = output<Record<string, any>>(); 
+  /** Output event stream for form submission payloads */
+  submitForm = output<Record<string, any>>();
 
-  /** The master control container coordinating localized dynamic sub-elements */
+  /** Internal form group instance */
   form!: FormGroup;
 
   /**
-   * Synchronous hook initializing view composition lifecycles.
-   * Mandates the conversion of static configurations into reactive node schemas.
+   * Reactive synchronization layer.
+   * Ensures form values are patched reactively whenever the external 
+   * initialData configuration evolves.
    */
+  constructor() {
+    effect(() => {
+      const cfg = this.config();
+
+      if (this.form && cfg.initialData) {
+        // Patch values without triggering infinite loop cycles
+        this.form.patchValue(cfg.initialData, { emitEvent: false });
+        // Force manual check to sync UI state in OnPush strategy
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.buildForm();
   }
 
   /**
-   * Translates incoming field metadata configurations array into an active, 
-   * strongly-tracked programmatic Angular FormGroup context tree layout.
+   * Form Factory: Constructs the FormGroup structure based on the schema definition.
    */
   private buildForm(): void {
     const group: Record<string, any> = {};
-    const currentConfig = this.config();
+    const cfg = this.config();
 
-    currentConfig.fields.forEach(field => {
-      // Defensive fallback evaluation parsing pre-existing initial payload entities versus empty creation constraints
-      const initialValue = currentConfig.initialData ? currentConfig.initialData[field.key] : '';
-      group[field.key] = [initialValue, field.validators || []];
+    cfg.fields.forEach(field => {
+      group[field.key] = [
+        cfg.initialData?.[field.key] || '',
+        field.validators || []
+      ];
     });
 
     this.form = this.fb.group(group);
   }
 
   /**
-   * Senior Integration Strategy: Manual Control Update Gate
-   * ---------------------------------------------------------------------------------
-   * Synchronizes external decoupled select selections straight into the baseline dynamic control loop.
-   * Manually dispatches value assignments and touches validation triggers to safeguard state data fidelity.
-   * * @param fieldKey Unique signature index key targeting the explicit Form Control node reference
-   * @param value The active domain entity option value emitted from the custom dropdown element
+   * Bridge for custom components: Updates specific control state upon selection.
+   * @param fieldKey Unique identifier of the target form field
+   * @param value Selected value to be patched
    */
   protected onDropdownSelectionChange(fieldKey: string, value: any): void {
     const control = this.form.get(fieldKey);
+
     if (control) {
       control.setValue(value);
-      control.markAsTouched(); // Instantly trips pristine states to force presentation rendering evaluation updates
+      control.markAsTouched();
+      this.cdr.markForCheck();
     }
   }
 
   /**
-   * Asserts logical validation states upon submission requests before emitting execution streams.
+   * Submission Handler: Validates the form state and emits data if pristine/valid.
    */
   protected onSubmit(): void {
     if (this.form.valid) {
       this.submitForm.emit(this.form.value);
     } else {
-      // Defensive feedback tactic: Expose invalid layout regions instantly to global UI layers
+      // Trigger validation feedback for all controls if submission attempt fails
       this.form.markAllAsTouched();
     }
   }
 
   /**
-   * Rejects outstanding UI criteria changes and routes view containers back to the primary domain indexes.
+   * Navigation: Redirects the user back to the product catalog view.
    */
   protected onCancel(): void {
     this.router.navigate(['/products']);
