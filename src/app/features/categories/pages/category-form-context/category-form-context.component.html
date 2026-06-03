@@ -1,0 +1,8 @@
+<!-- Render the dynamic form page only when pageConfig is available -->
+<div class="category-form-context-wrapper">
+  @if (pageConfig(); as TaxConfig) {
+    <app-dynamic-form-page
+      [config]="TaxConfig"
+      (submitForm)="onFormSubmit($event)"> </app-dynamic-form-page>
+  }
+</div>

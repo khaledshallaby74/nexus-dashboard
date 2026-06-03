@@ -24,4 +24,18 @@
     // @include spacing(p, 16); // Utilizing the centralized spacing system
     overflow-y: auto; // Enables independent scrolling for the content area
   }
+  .global-overlay-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3); // طبقة رمادية شفافة Enterprise جداً
+  backdrop-filter: blur(2px); // تأثير بلور خفيف وشيك
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; // يغطي كل شيء بما فيهم الـ Sidebar والـ Navbar لمنع الـ Spams
+  pointer-events: all; // يمنع المستخدم تماماً من الضغط على أي زرار أثناء التحميل
+}
 }

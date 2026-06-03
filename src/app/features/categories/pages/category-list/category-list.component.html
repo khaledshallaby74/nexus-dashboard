@@ -1,0 +1,42 @@
+<div class="category-list-page-container">
+    <!---------------- FILTER BAR ---------------->
+  <!-- Smart child: emits filter, view-mode, and add-category events upward -->
+  <app-category-filter-bar
+    (searchChange)="onSearchChange($event)"
+    (viewModeChange)="onViewModeChange($event)"
+    (addNewCategory)="onAddNewCategory()">
+  </app-category-filter-bar>
+  <!---------------- CONTENT ZONE ---------------->
+  <div class="main-content-display-zone">
+    <!-- TABLE VIEW — standard row-based layout -->
+    @if (categoriesService.viewMode() === 'table') {
+      <app-generic-table
+          [data]="[...categoriesService.categories()]"
+          [config]="tableConfig"
+          (rowClick)="onCategoryClick($event)"
+          (actionClick)="onCategoryAction($event)">
+      </app-generic-table>
+    } @else {
+      <!-- CARDS VIEW — responsive flex/grid layout -->
+      <div class="cards-grid">
+        @for (category of categoriesService.categories(); track category.slug) {
+          <!-- @defer + viewport — lazy loads cards only when scrolled into viewhuge performance win for large datasets -->
+          @defer (on viewport) {
+            <app-generic-card
+              (click)="onCategoryClick(category)"
+              (edit)="onCategoryAction({ action: 'edit', row: category })"
+              (delete)="onCategoryAction({ action: 'delete', row: category })">
+              <app-category-card card-body [category]="category"></app-category-card>
+            </app-generic-card>
+          } 
+          @placeholder {
+            <!-- Skeleton loader shown while card is off-screen — prevents layout shift -->
+            <div class="card-skeleton-loader" aria-hidden="true"></div>
+          }
+        }
+      </div>
+    }
+
+  </div>
+
+</div>

@@ -1,18 +1,17 @@
 <div class="product-list-page-container">
 
-  <!---------------- FILTER BAR ---------------->
-  <!-- Smart child: emits filter, view-mode, and add-product events upward -->
+  <!-- Filter bar: categories, search, view mode toggle, and add new product button -->
   <app-product-filter-bar
     [categories]="productsService.categories()"
+    [selectedCategory]="productsService.selectedCategory()"
     (filterChange)="onFilterChange($event)"
     (viewModeChange)="onViewModeChange($event)"
     (addNewProduct)="onAddNewProduct()">
   </app-product-filter-bar>
 
-  <!---------------- CONTENT ZONE ---------------->
   <div class="main-content-display-zone">
 
-    <!-- TABLE VIEW — standard row-based layout -->
+    <!-- Table view: display products in a sortable, action-capable table -->
     @if (productsService.viewMode() === 'table') {
 
       <app-generic-table
@@ -24,24 +23,23 @@
 
     } @else {
 
-      <!-- CARDS VIEW — responsive flex/grid layout -->
+      <!-- Card grid view: display products as responsive cards -->
       <div class="cards-grid">
         @for (product of productsService.products(); track product.id) {
 
-          <!-- @defer + viewport — lazy loads cards only when scrolled into view
-               huge performance win for large datasets -->
+          <!-- Lazy load cards when they enter the viewport for better performance -->
           @defer (on viewport) {
             <app-generic-card
               (cardClick)="onViewProductDetails(product)"
               (edit)="onProductAction('edit', product)"
               (delete)="onProductAction('delete', product)">
 
-              <!-- Projected content via [card-body] selector (see generic-card template) -->
+              <!-- Projected card body with product-specific content -->
               <app-product-card card-body [product]="product"></app-product-card>
 
             </app-generic-card>
           } @placeholder {
-            <!-- Skeleton loader shown while card is off-screen — prevents layout shift -->
+            <!-- Skeleton loader shown while the card is being lazy-loaded -->
             <div class="card-skeleton-loader" aria-hidden="true"></div>
           }
 
@@ -51,8 +49,7 @@
 
   </div>
 
-  <!---------------- PAGINATION ---------------->
-  <!-- Conditionally rendered — only shown when items exceed page limit -->
+  <!-- Pagination: only shown when total items exceed the current page limit -->
   @if (productsService.totalItems() > productsService.limitState()) {
     <div class="pagination-footer-wrapper flex-center mt-4 pt-3">
       <app-pagination
@@ -65,4 +62,3 @@
   }
 
 </div>
-

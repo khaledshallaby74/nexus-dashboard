@@ -1,6 +1,5 @@
 <div class="filter-section-wrapper w-100" role="search" 
-     [attr.aria-label]="'FILTER_BAR.ARIA.NAV_FILTERS' | translate:{ moduleName: (moduleTranslationKey() | translate) }">
-  
+  [attr.aria-label]="'FILTER_BAR.ARIA.NAV_FILTERS' | translate:{ moduleName: (moduleTranslationKey() | translate) }">
   <!-- Header area: Title + Add button -->
   <div class="d-flex justify-content-between align-items-center gap-3 w-100 mb-3">
     <div class="title-area">
@@ -11,67 +10,37 @@
         {{ 'FILTER_BAR.GENERIC_SUBTITLE' | translate:{ moduleName: (moduleTranslationKey() | translate) } }}
       </p>
     </div>
-    
     <!-- Add new entity button -->
     <button 
       type="button" 
       class="btn-add bg-green-500 cursor-pointer text-white border-0" 
       [attr.aria-label]="'FILTER_BAR.ARIA.CREATE_ENTITY' | translate:{ entityName: (entitySingularTranslationKey() | translate) }"
-      (click)="addNewProduct.emit()">
+      (click)="addNewCategory.emit()">
       {{ 'FILTER_BAR.BTN_NEW_PREFIX' | translate:{ entityName: (entitySingularTranslationKey() | translate) } }}
       <span class="icon" aria-hidden="true">+</span> 
     </button>
   </div>
-
-  <!-- Filter bar card: Search, Category dropdown, View switcher -->
+  <!-- Filter bar card: Search, View switcher -->
   <div class="filter-bar-card w-100">
     <div class="row align-items-end w-100 m-0">
-      
       <!-- Search input column -->
       <div class="col-12 col-lg-6 px-2">
         <div class="d-flex flex-column gap-1">
-          <label class="form-label mb-1" for="product-search-field">
+          <label class="form-label mb-1" for="category-search-field">
             {{ 'FILTER_BAR.LABELS.SEARCH' | translate }}
           </label>
           <app-search-input 
-            id="product-search-field"
+            id="category-search-field"
             [placeholder]="'COMMON.SEARCH_PLACEHOLDER'"
             [ariaLabel]="'FILTER_BAR.LABELS.SEARCH' | translate"
             (searchChange)="onSearch($event)">
           </app-search-input>
         </div>
       </div>
-      
-      <!-- Category dropdown + View switcher column -->
-      <div class="col-12 col-lg-6 p-0">
-        <div class="row g-2 align-items-end justify-content-lg-end m-0 w-100">
-          
-          <!-- Category dropdown -->
-          <div class="col-7 col-md-8 col-lg-7 px-2">
-            <div class="d-flex flex-column gap-1">
-              <label class="form-label mb-1" id="category-dropdown-label">
-                {{ 'FILTER_BAR.LABELS.CATEGORY' | translate }}
-              </label>
-              
-              <!-- Categories loaded state -->
-              @if (categories() && categories().length > 0) {
-                <app-dropdown 
-                  [items]="categories()" 
-                  [selectedValue]="selectedCategoryValue()"
-                  aria-labelledby="category-dropdown-label"
-                  (selectionChange)="onCategorySelect($event)">
-                </app-dropdown>
-              } @else {
-                <!-- Categories loading state -->
-                <div class="dropdown-placeholder-loading py-2" role="status" aria-live="polite">
-                  {{ 'FILTER_BAR.LOADING_SEGMENTS' | translate }}
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- View switcher (Table / Cards toggle) -->
-          <div class="col-5 col-md-4 col-lg-5 px-2 d-flex justify-content-end">
+      <!-- View switcher (Table / Cards toggle) -->
+      <div class="col-12 col-lg-6 p-0 mt-3 mt-lg-0">
+        <div class="row g-2 align-items-end justify-content-end m-0 w-100">
+          <div class="col-12 d-flex justify-content-end px-2">
             <div role="group" [attr.aria-label]="'Layout view switch options'">
               <app-view-switcher 
                 [currentMode]="currentViewMode()" 
@@ -86,4 +55,3 @@
     </div>
   </div>
 </div>
-

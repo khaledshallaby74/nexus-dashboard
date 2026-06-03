@@ -6,6 +6,7 @@
         "PRODUCTS": "Products",
         "CATEGORIES": "Categories",
         "PRODUCT_SINGULAR": "Product",
+        "CATEGORY_SINGULAR": "Category",
         "TOGGLE_THEME": "Toggle Theme",
         "TABLE": "Table",
         "CARDS": "Cards",
@@ -55,6 +56,8 @@
     "TABLE": {
         "HEADERS": {
             "TITLE": "Title",
+            "NAME": "Name",
+            "SLUG": "Slug",
             "CATEGORY": "Category",
             "PRICE": "Price",
             "STOCK": "Stock",
@@ -108,6 +111,24 @@
         },
         "PLACEHOLDERS": {
             "SELECT_OPTION": "Select Category..."
+        }
+    },
+    "CATEGORY": {
+        "_comment_category": "Taxonomy Management Context Structure",
+        "PAGES": {
+            "CREATE_TITLE": "Create New Category",
+            "EDIT_TITLE": "Edit Category",
+            "SUBTITLE_CREATE_INFO": "Define a new catalog taxonomy node including name, unique slug identifiers, and metadata.",
+            "SUBTITLE_EDIT_INFO": "Modify current taxonomy settings, routing tokens, and structural associations."
+        },
+        "BUTTONS": {
+            "CREATE": "Save & Publish Category",
+            "UPDATE": "Update Category"
+        },
+        "FIELDS": {
+            "NAME": "Category Name",
+            "SLUG": "URL Slug Token",
+            "URL": "Resource Location URL"
         }
     }
 }

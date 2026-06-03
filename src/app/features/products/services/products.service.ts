@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Product, ProductResponse } from '../models/product';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { DropdownItem } from '../../../shared/models/dropdown.model';
 import { TableColumnConfig } from '../../../shared/models/table.model';
 
 /**
  * Enterprise Product Service Layer
  * -----------------------------------------------------------------------------------
- * Manages the domain state for products, including normalized entity mapping,
- * reactive filtering, and CRUD operation pipelines.
+ * Centralized domain state manager for product assets. Implements the Repository 
+ * Pattern to orchestrate normalized entity caching, reactive state synchronization,
+ * and declarative data fetching pipelines.
  */
 @Injectable({
   providedIn: 'root',
@@ -18,47 +19,30 @@ export class ProductsService {
   private http = inject(HttpClient);
   private endPoints = 'products';
 
-  // --- State Signals ---
-  
-  /** Primary stream of the current paginated product list */
+  // --- State Signals (Encapsulated Writable State) ---
+  /** Master list of product records for list views */
   private productsState = signal<Product[]>([]);
-  
-  /** * Normalized entity cache (Map-like structure).
-   * Enables O(1) time complexity for record retrieval by primary key.
-   */
+  /** Normalized entity cache for O(1) retrieval efficiency */
   private productEntities = signal<Record<number, Product>>({});
-  
-  /** Taxonomy registry for filtering context */
+  /** Taxonomy registry for filtering operations */
   private categoriesState = signal<string[]>([]);
 
-  // --- UI State Management ---
-  
-  /** Layout projection mode toggle */
+  // --- UI State Management (Projection Signals) ---
   viewMode = signal<'table' | 'cards'>('table');
-  
-  /** Total record count for pagination boundary calculations */
   totalItems = signal<number>(0);
-  
-  /** Records per slice constraint */
   limitState = signal<number>(10);
-  
-  /** Current pagination page index cursor */
   currentPage = signal<number>(1);
-  
-  /** Current text search predicate */
   searchQuery = signal<string>('');
-  
-  /** Currently selected taxonomy filter */
   selectedCategory = signal<string>('');
 
   /** Derived pagination offset calculated from page index and slice limit */
   skipState = computed(() => (this.currentPage() - 1) * this.limitState());
   
-  /** Public interface for the active dataset */
+  /** Public interface for the active dataset projection */
   products = computed(() => this.productsState());
 
-  /** * Transforms raw categories into dropdown-compliant objects.
-   * Prepends a global 'All' selection for filter resetting.
+  /** * Taxonomy projection: 
+   * Transforms raw API categories into dropdown-compliant UI configuration objects. 
    */
   categories = computed<DropdownItem[]>(() => {
     const allOption: DropdownItem = { label: 'All Categories', value: 'All Categories' };
@@ -66,14 +50,17 @@ export class ProductsService {
     return [allOption, ...apiOptions];
   });
 
-  /** Retrieves a specific entity from the local normalized cache using O(1) lookup */
+  /** Retrieve product instance by ID from the normalized entity cache */
   getProductById(id: string | null): Product | undefined {
     if (!id) return undefined;
     return this.productEntities()[+id];
   }
 
-  /** Synchronizes product stream based on active filter and pagination states */
-  loadProducts(): void {
+  /**
+   * Catalog Hydration Pipeline:
+   * Evaluates current filter predicates and executes remote fetching operations.
+   */
+  loadProducts(): Observable<ProductResponse> {
     let apiEndPoint = this.endPoints;
     if (this.selectedCategory() && this.selectedCategory() !== 'All Categories') {
       apiEndPoint = `${this.endPoints}/category/${this.selectedCategory().toLowerCase()}`;
@@ -83,38 +70,45 @@ export class ProductsService {
 
     const queryParams = `?limit=${this.limitState()}&skip=${this.skipState()}` + (this.searchQuery() ? `&q=${this.searchQuery()}` : '');
 
-    this.http.get<ProductResponse>(`${apiEndPoint}${queryParams}`).pipe(
+    return this.http.get<ProductResponse>(`${apiEndPoint}${queryParams}`).pipe(
       tap(res => {
         this.productsState.set(res.products);
+        // Entity Normalization: Map collection into indexed records
         const entityMap: Record<number, Product> = {};
         res.products.forEach(p => entityMap[p.id] = p);
-        // Sync local cache with remote result set
         this.productEntities.update(current => ({ ...current, ...entityMap }));
         this.totalItems.set(res.total);
       })
-    ).subscribe();
+    );
   }
 
-  /** Lazy-loads a single entity from remote if not cached locally */
-  loadSingleProduct(id: string): void {
+  /**
+   * Atomic Asset Fetcher:
+   * Checks entity cache before falling back to remote API execution.
+   */
+  loadSingleProduct(id: string): Observable<Product> {
     const numericId = +id;
-    if (this.productEntities()[numericId]) return;
+    const cachedProduct = this.productEntities()[numericId];
 
-    this.http.get<Product>(`${this.endPoints}/${id}`).pipe(
+    if (cachedProduct) return of(cachedProduct);
+
+    return this.http.get<Product>(`${this.endPoints}/${id}`).pipe(
       tap(product => {
         this.productEntities.update(state => ({ ...state, [product.id]: product }));
       })
-    ).subscribe();
+    );
   }
 
-  /** Fetches remote taxonomy registry for UI hydration */
-  loadCategories(): void {
-    this.http.get<string[]>(`${this.endPoints}/category-list`).pipe(
+  /** Fetches available product taxonomies from the remote service */
+  loadCategories(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.endPoints}/category-list`).pipe(
       tap(res => this.categoriesState.set(res))
-    ).subscribe();
+    );
   }
 
-  /** Performs optimistic creation of new products */
+  /** * Persistence Pipeline (Add):
+   * Performs optimistic state update to reflect remote changes locally.
+   */
   addProduct(productData: Record<string, any>): Observable<Product> {
     return this.http.post<Product>(`${this.endPoints}/add`, productData).pipe(
       tap(newProduct => {
@@ -125,7 +119,7 @@ export class ProductsService {
     );
   }
 
-  /** Updates existing entity with delta changes and synchronizes state */
+  /** Persistence Pipeline (Update) */
   updateProduct(id: number, productData: Record<string, any>): Observable<Product> {
     return this.http.put<Product>(`${this.endPoints}/${id}`, productData).pipe(
       tap(updated => {
@@ -135,7 +129,7 @@ export class ProductsService {
     );
   }
 
-  /** Deletes an entity and purges it from normalized state caches */
+  /** Persistence Pipeline (Delete) */
   deleteProduct(id: number): Observable<any> {
     return this.http.delete(`${this.endPoints}/${id}`).pipe(
       tap(() => {
@@ -150,26 +144,26 @@ export class ProductsService {
     );
   }
 
-  /** Resets page index and triggers new fetch cycle on filter mutation */
+  /** Syncs filter states and resets pagination to baseline */
   updateFilters(search: string, category: string): void {
     this.searchQuery.set(search);
     this.selectedCategory.set(category);
     this.currentPage.set(1);
-    this.loadProducts();
+    this.loadProducts().subscribe();
   }
 
   onPageChange(page: number): void {
     this.currentPage.set(page);
-    this.loadProducts();
+    this.loadProducts().subscribe();
   }
 
-  toggleViewMode(mode: 'table' | 'cards') { this.viewMode.set(mode); }
+  toggleViewMode(mode: 'table' | 'cards'): void { this.viewMode.set(mode); }
   
   private capitalize(str: string): string { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; }
 
   /**
-   * Computed column definition factory.
-   * Maps domain entity keys to translatable UI headers.
+   * Dynamic Table Schema Registry:
+   * Maps domain model properties to UI column specifications.
    */
   tableColumnsConfig = computed<TableColumnConfig[]>(() => {
     const current = this.productsState();

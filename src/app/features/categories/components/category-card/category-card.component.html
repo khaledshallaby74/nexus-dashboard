@@ -1,0 +1,19 @@
+<div class="card-custom-layout">
+  <!---------------- IMAGE ZONE ---------------->
+  <div class="image-zone">
+    <!-- loading="lazy" — defers off-screen image loading, boosts performance -->
+    <img class="img-contain p-12"
+      [src]="category().thumbnail"
+      [alt]="category().name"
+      loading="lazy" />
+  </div>
+  <!---------------- INFO ZONE ---------------->
+  <div class="info-zone">
+    <!-- Title + slug on one row — keeps a clean scan-line -->
+    <div class="title-meta-row">
+      <h3 class="title">{{ category().name }}</h3>
+      <span class="meta-value">{{ category().slug }}</span>
+    </div>
+    
+  </div>
+</div>

@@ -128,7 +128,7 @@
     @include spacing(mt, 12);
 
     // Primary Entity Signature Context Anchor
-    .title-price-row {
+    .title-meta-row {
       @include flex-between;
       align-items: flex-start;
       @include spacing(gap, 12);
@@ -141,7 +141,7 @@
         @include line-clamp(2); // Defensive UI: Prevents multi-line overflow layout distortion
       }
 
-      .price {
+      .meta-value {
         font-weight: map-get($font-weights, bold);
         font-size: map-get($font-sizes, '12');
         color: $green-500; // Semantic currency anchor accent token

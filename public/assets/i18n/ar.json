@@ -7,6 +7,7 @@
         "USERS": "المستخدمين",
         "CATEGORIES": "الأقسام",
         "PRODUCT_SINGULAR": "منتج",
+        "CATEGORY_SINGULAR": "قسم",
         "TOGGLE_THEME": "تغيير الوضع",
         "TABLE": "جدول",
         "CARDS": "بطاقات",
@@ -56,6 +57,8 @@
     "TABLE": {
         "HEADERS": {
             "TITLE": "الاسم",
+            "NAME": "الاسم",
+            "SLUG": "المُعرِّف الفريد (Slug)",
             "CATEGORY": "القسم",
             "PRICE": "السعر",
             "STOCK": "المخزون",
@@ -109,6 +112,24 @@
         },
         "PLACEHOLDERS": {
             "SELECT_OPTION": "اختر القسم..."
+        }
+    },
+    "CATEGORY": {
+        "_comment_category": "Taxonomy Management Context Structure - Arabic",
+        "PAGES": {
+            "CREATE_TITLE": "إنشاء قسم جديد",
+            "EDIT_TITLE": "تعديل القسم",
+            "SUBTITLE_CREATE_INFO": "تعريف عقدة تصنيف جديدة في الدليل تشمل الاسم، والمُعرِّفات الفريدة، والبيانات الوصفية.",
+            "SUBTITLE_EDIT_INFO": "تعديل إعدادات التصنيف الحالي، ورموز التوجيه (Tokens)، والروابط الهيكلية للقسم."
+        },
+        "BUTTONS": {
+            "CREATE": "حفظ ونشر القسم",
+            "UPDATE": "تحديث بيانات القسم"
+        },
+        "FIELDS": {
+            "NAME": "اسم القسم",
+            "SLUG": "رمز الرابط (Slug)",
+            "URL": "رابط موقع المورد (URL)"
         }
     }
 }

@@ -1,9 +1,17 @@
 import { HttpInterceptorFn, HttpResponse } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
-import { catchError, finalize, tap, throwError, timeout, TimeoutError } from "rxjs";
+import { catchError, finalize, tap, throwError, timeout, TimeoutError, retry, timer } from "rxjs";
 import { inject } from "@angular/core";
 import { ToastService } from "../services/toast/toast.service"; 
 import { LoadingService } from "../services/loading/loading.service";
+
+/**
+ * Global Network Throttling State
+ * -----------------------------------------------------------------------------------
+ * Prevents continuous concurrent layout spamming by deduplicating multi-stream 
+ * network failures (e.g., synchronous status 0 closures) into a single visual feedback node.
+ */
+let isNetworkErrorToastActive = false;
 
 /**
  * Global API Interceptor
@@ -13,6 +21,7 @@ import { LoadingService } from "../services/loading/loading.service";
  * 2. Automated Notification Dispatch (ToastService).
  * 3. Global Error Handling & Timeout Management.
  * 4. URL Normalization.
+ * 5. Smart Exponential Backoff Retry Strategy.
  */
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     const baseUrl = environment.baseUrl;
@@ -33,6 +42,16 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     });
 
     return next(apiReq).pipe(
+        // 🔄 Smart Retry Pipeline: Backs off execution intervals gracefully to mitigate momentary offline drops
+        retry({
+            count: req.method === 'GET' ? 2 : 0, // Idempotent requests only; mutation methods avoid duplication targets
+            delay: (error, retryCount) => {
+                const backoffDelay = retryCount * 1500;
+                console.warn(`[Network Retry] Attempt ${retryCount} for unified route: ${req.url}. Re-dispatching in ${backoffDelay}ms...`);
+                return timer(backoffDelay);
+            }
+        }),
+
         // Enforce network strictness: 7s SLA for server responses
         timeout(7000), 
 
@@ -94,10 +113,22 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
 
             if (error instanceof TimeoutError) {
                 errorMessage = 'The connection timed out. Please check your internet speed.';
-                toastService.warning(errorMessage);
+                
+                // Deduplicate timeout alert streams
+                if (!isNetworkErrorToastActive) {
+                    isNetworkErrorToastActive = true;
+                    toastService.warning(errorMessage);
+                    setTimeout(() => isNetworkErrorToastActive = false, 4000);
+                }
             } else if (error.status === 0) {
                 errorMessage = 'No internet connection detected. Please check your network.';
-                toastService.error(errorMessage);
+                
+                // Deduplicate structural status 0 offline loops
+                if (!isNetworkErrorToastActive) {
+                    isNetworkErrorToastActive = true;
+                    toastService.error(errorMessage);
+                    setTimeout(() => isNetworkErrorToastActive = false, 4000);
+                }
             } else {
                 errorMessage = error.error?.message || error.message || errorMessage;
                 
