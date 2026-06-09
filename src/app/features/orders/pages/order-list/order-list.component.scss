@@ -1,0 +1,108 @@
+@use 'abstract/mixins' as *;
+@use 'abstract/variables' as *;
+
+/**
+ * Financial Summary Cards Strip (KPI Dashboard Layer)
+ * -----------------------------------------------------------------------------------
+ * Orchestrates an adaptive grid-based dashboard for high-density financial metrics.
+ * Implements a responsive layout scaling strategy from mobile (single-column) 
+ * to wide-screen (triple-column) formats.
+ */
+.financial-summary-cards-strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  @include spacing(gap, 24);                      
+  @include spacing(mb, 24); 
+  @include spacing(mt, 16); 
+
+  /* Responsive Grid Breakpoints */
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/**
+ * KPI Metric Card Container Asset
+ * -----------------------------------------------------------------------------------
+ * Atomic card component representing a single financial metric.
+ * Supports theme-aware styling, hover-lift micro-interactions, and 
+ * semantic color-coding for different revenue types.
+ */
+.kpi-card-metric {
+  background: var(--bg-card);
+  @include border;
+  @include radius(16px);                        
+  @include spacing(p, 24);                      
+  position: relative;
+  overflow: hidden;                             
+  @include transition(box-shadow, transform);
+
+  /* Interaction State: Subtle lifting micro-interaction to establish visual depth */
+  &:hover {
+    @include shadow-lg;
+    cursor: pointer;
+    transform: translateY(-2px);
+  }
+
+  /* Metric Label: Semantic descriptor for the KPI value */
+  .label {
+    display: block;
+    color: var(--text-muted);
+    font-weight: map-get($font-weights, semibold);
+    font-size: map-get($font-sizes, '14');
+    text-transform: capitalize;                
+    letter-spacing: 0.025em;
+    @include spacing(mb, 8);                    
+  }
+
+  /* Metric Value: Primary KPI output rendered with high-contrast typography */
+  h3 {
+    color: var(--text-main); 
+    font-weight: map-get($font-weights, bold);
+    font-size: map-get($font-sizes, '32');      
+    line-height: 1.2;
+    letter-spacing: -0.02em;                    
+    white-space: nowrap;                        
+  }
+
+  /* -----------------------------------------
+   * Theme/Type Variations:
+   * Color harmony configurations for financial classification
+   * ----------------------------------------- */
+  
+  /** Gross Revenue: Primary liquidity representation */
+  &.gross-revenue {
+    h3 { color: var(--text-main); }
+    &::before { background: var(--text-main); }
+  }
+
+  /** Net Revenue: Financial success/gain indicator */
+  &.net-revenue {
+    h3 { color: $success; }
+    &::before { background: $success; }
+  }
+
+  /** Logistics/Operations: Process-oriented metric indicator */
+  &.items-processed {
+    h3 { color: $blue-500; }
+    &::before { background: $blue-500; }
+  }
+
+  /** Anchor Strip: Visual accent indicating the card's domain category */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    inset-inline-start: 0;  
+    width: 4px;                                 
+    background: transparent;
+    border-start-start-radius: 12px; 
+    border-end-start-radius: 12px;  
+    
+  }
+}

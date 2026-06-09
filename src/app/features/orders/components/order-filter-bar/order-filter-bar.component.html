@@ -1,0 +1,75 @@
+<!-- ============================================================
+  Orders Ledger — Filter Section
+  A filter bar with a search field, status dropdown, and layout
+  view switcher. Used at the top of the orders ledger page to
+  let users search, filter by status, and switch between views.
+  ============================================================ -->
+<div class="filter-section-wrapper w-100" role="search" aria-label="Orders ledger filters">
+  
+  <!-- Header: title + subtitle -->
+  <div class="d-flex justify-content-between align-items-center gap-3 w-100 mb-3">
+    <div class="title-area">
+      <h1 class="page-title fs-24 fw-bold mb-1">
+        {{ 'ORDERS.FILTER_BAR.TITLE' | translate }}
+      </h1>
+      <p class="page-subtitle fs-14 text-muted mb-0">
+        {{ 'ORDERS.FILTER_BAR.SUBTITLE' | translate }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Filter bar card: search, status dropdown, view switcher -->
+  <div class="filter-bar-card w-100">
+    <div class="row align-items-end w-100 m-0">
+      
+      <!-- Left column: search input (full width on mobile, half on desktop) -->
+      <div class="col-12 col-lg-6 px-2">
+        <div class="d-flex flex-column gap-1">
+          <label class="form-label mb-1" for="order-search-field">
+            {{ 'ORDERS.FILTER_BAR.LABELS.SEARCH' | translate }}
+          </label>
+          <app-search-input 
+            id="order-search-field"
+            [placeholder]="'ORDERS.FILTER_BAR.SEARCH_PLACEHOLDER'"
+            [ariaLabel]="'ORDERS.FILTER_BAR.LABELS.SEARCH' | translate"
+            (searchChange)="onSearch($event)">
+          </app-search-input>
+        </div>
+      </div>
+      
+      <!-- Right column: status dropdown + view switcher -->
+      <div class="col-12 col-lg-6 p-0">
+        <div class="row g-2 align-items-end justify-content-lg-end m-0 w-100">
+          
+          <!-- Status dropdown selector — filters orders by their current status (e.g., pending, shipped) -->
+          <div class="col-7 col-md-8 col-lg-7 px-2">
+            <div class="d-flex flex-column gap-1">
+              <label class="form-label mb-1" id="status-dropdown-label">
+                {{ 'ORDERS.FILTER_BAR.LABELS.STATUS' | translate }}
+              </label>
+              
+              <app-dropdown 
+                [items]="statuses()" 
+                [selectedValue]="selectedStatusValue()"
+                aria-labelledby="status-dropdown-label"
+                (selectionChange)="onStatusSelect($event)">
+              </app-dropdown>
+            </div>
+          </div>
+
+          <!-- View mode switcher — toggles between list view, grid view, etc. -->
+          <div class="col-5 col-md-4 col-lg-5 px-2 d-flex justify-content-end">
+            <div role="group" aria-label="Layout view switch options">
+              <app-view-switcher 
+                [currentMode]="currentViewMode()" 
+                (modeChange)="setViewMode($event)">
+              </app-view-switcher>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

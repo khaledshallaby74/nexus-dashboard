@@ -154,6 +154,19 @@
       font-size: map-get($font-sizes, '12');
       color: var(--primary);
       @include spacing(mt, 4);
+      /* Semantic Feedback Theme Mappings */
+      &.delivered, &.completed{
+        color: $success;
+      }
+      &.pending, &.processing {
+        color: $warning;
+      }
+      &.danger, &.cancelled, &.rejected, &.inactive {
+        color: $error;
+      }
+      &.info{
+        color: $blue-600;
+      }
     }
 
     // Comprehensive Narrative Details Field Slot

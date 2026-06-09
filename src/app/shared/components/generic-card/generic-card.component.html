@@ -8,28 +8,29 @@
   </div>
 
   <!-- Footer section — stopPropagation prevents cardClick from firing when interacting with actions -->
-  <footer class="card-actions-footer" (click)="$event.stopPropagation()">
-    
-    <!-- Edit action button with green styling and hover zoom effect -->
-    <button 
-      type="button" 
-      class="btn-card-action edit text-green-500 hover-zoom" 
-      (click)="edit.emit()" 
-      [attr.aria-label]="'TABLE.HEADERS.EDIT' | translate">
-      {{'TABLE.HEADERS.EDIT' | translate}}
-      <span class="ic-base ic-edit text-green-500 ic-s20 bg-cover cursor-pointer"></span>
-    </button>
-    
-    <!-- Delete action button with error/red styling and hover zoom effect -->
-    <button 
-      type="button" 
-      class="btn-card-action text-error delete hover-zoom" 
-      (click)="delete.emit()" 
-      [attr.aria-label]="'TABLE.HEADERS.DELETE' | translate">
-      {{'TABLE.HEADERS.DELETE' | translate}}
-      <span class="ic-base text-error ic-trash ic-s20 bg-cover cursor-pointer"></span>
-    </button>
+   @if (showActions()) {
+    <footer class="card-actions-footer" (click)="$event.stopPropagation()">
+      
+      <!-- Edit action button with green styling and hover zoom effect -->
+      <button 
+        type="button" 
+        class="btn-card-action edit text-green-500 hover-zoom" 
+        (click)="edit.emit()" 
+        [attr.aria-label]="'TABLE.HEADERS.EDIT' | translate">
+        {{'TABLE.HEADERS.EDIT' | translate}}
+        <span class="ic-base ic-edit text-green-500 ic-s20 bg-cover cursor-pointer"></span>
+      </button>
+      
+      <!-- Delete action button with error/red styling and hover zoom effect -->
+      <button 
+        type="button" 
+        class="btn-card-action text-error delete hover-zoom" 
+        (click)="delete.emit()" 
+        [attr.aria-label]="'TABLE.HEADERS.DELETE' | translate">
+        {{'TABLE.HEADERS.DELETE' | translate}}
+        <span class="ic-base text-error ic-trash ic-s20 bg-cover cursor-pointer"></span>
+      </button>
 
-  </footer>
-
+    </footer>
+  }
 </article>

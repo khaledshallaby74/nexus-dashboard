@@ -52,7 +52,8 @@ export class DropdownComponent {
 
   /** Computed getter to display the label associated with the selected value */
   selectedLabel = computed(() => {
-    const item = this.items().find(i => i.value === this.selectedValue());
+    const currentVal = this.selectedValue(); 
+    const item = this.items().find(i => i.value === currentVal);
     return item ? item.label : this.placeholder();
   });
 }

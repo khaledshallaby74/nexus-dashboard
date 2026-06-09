@@ -81,6 +81,29 @@ export const routes: Routes = [
             (m) => m.CategoryFormContextComponent
           ),
         title: 'NEXUS - Edit Category'
+      },
+      /** * * Accounting Ledger Operations View 
+       * Master financial and operations interface tracking commercial client orders.
+       */
+      {
+        path: 'orders',
+        loadComponent: () => 
+          import('./features/orders/pages/order-list/order-list.component').then(
+            (m) => m.OrderListComponent
+          ),
+        title: 'NEXUS - Orders Management Ledger'
+      },
+
+      /** * * Transactional Master-Detail Inspection Gate 
+       * Deep packet inspection tunnel for cross-referencing nested assets inside a unique order.
+       */
+      {
+        path: 'orders/:id',
+        loadComponent: () => 
+          import('./features/orders/pages/order-detail/order-detail.component').then(
+            (m) => m.OrderDetailComponent
+          ),
+        title: 'NEXUS - Order Auditing Details'
       }
     ]
   }

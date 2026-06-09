@@ -30,8 +30,15 @@
                 <span class="badge-pill" [ngClass]="getBadgeClass(row[col.key], col.key)">
                   @if (col.key === 'category') {
                     {{ 'TABLE.BADGES.' + (row[col.key] | uppercase) | translate }}
+    
+                  } @else if (col.key === 'status') {
+                    {{ 'ORDERS.FILTERS.' + (row[col.key] | uppercase) | translate }}
+                    
+                  } @else if (col.key === 'total' || col.key === 'discountedTotal' || col.key === 'price') {
+                    {{ row[col.key] | currency:'USD':'symbol':'1.2-2' }}
+                    
                   } @else {
-                    {{ col.key === 'price' ? '$' + row[col.key] : row[col.key] }}
+                    {{ row[col.key] }}
                   }
                 </span>
               }

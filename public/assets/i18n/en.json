@@ -5,8 +5,10 @@
         "DASHBOARD": "Dashboard",
         "PRODUCTS": "Products",
         "CATEGORIES": "Categories",
+        "ORDERS": "Orders",
         "PRODUCT_SINGULAR": "Product",
         "CATEGORY_SINGULAR": "Category",
+        "ORDER_SINGULAR": "Order Ledger",
         "TOGGLE_THEME": "Toggle Theme",
         "TABLE": "Table",
         "CARDS": "Cards",
@@ -30,7 +32,7 @@
             "DASHBOARD": "Dashboard",
             "PRODUCTS": "Products",
             "CATEGORIES": "Categories",
-            "ORDERS": "Orders",
+            "ORDERS": "Orders Ledger",
             "CUSTOMERS": "Customers",
             "PROFILE": "Profile",
             "SETTINGS": "Settings",
@@ -129,6 +131,40 @@
             "NAME": "Category Name",
             "SLUG": "URL Slug Token",
             "URL": "Resource Location URL"
+        }
+    },
+
+
+    "ORDERS": {
+        "INVOICE_NUMBER": "INV-{{id}}",
+        "UNIT_PCS": "Pcs",
+        "FILTER_BAR": {
+            "TITLE": "Financial Orders Ledger",
+            "SUBTITLE": "Monitor gross capital intake, audit transactional invoices, and filter logistics.",
+            "SEARCH_PLACEHOLDER": "Search by Order ID or Customer ID...",
+            "LABELS": {
+                "SEARCH": "Financial Lookup",
+                "STATUS": "Order Status"
+            }
+        },
+        "SUMMARY_CARDS": {
+            "GROSS_REVENUE": "Gross Revenue",
+            "NET_REVENUE": "Net Revenue (Collected)",
+            "LOGISTICS_UNITS": "Total Units Processed"
+        },
+        "FILTERS": {
+            "ALL": "All Orders",
+            "PENDING": "Pending Check",
+            "SHIPPED": "Shipped Out",
+            "DELIVERED": "Delivered"
+        },
+        "TABLE": {
+            "ID": "Invoice ID",
+            "CUSTOMER_ID": "Customer Reference",
+            "ITEMS_COUNT": "Total Quantity",
+            "GROSS_TOTAL": "Gross Income",
+            "NET_TOTAL": "Net Income",
+            "STATUS": "Operational Status"
         }
     }
 }

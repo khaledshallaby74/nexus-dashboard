@@ -2,16 +2,32 @@
 
 /* --- DARK THEME CONFIGURATION --- */
 [data-theme = 'dark'] {
-// Background Colors: Main surface and card-level backgrounds
+    // Background Colors: Main surface and card-level backgrounds
     --bg-main: #{$gray-900};
     --bg-card: #{$gray-800};
     --bg-active: #{$gray-1000};
-// Typography: Primary and secondary (muted) text colors
+    // Typography: Primary and secondary (muted) text colors
     --text-main: #{$white};
     --text-muted: #{$gray-400};
 
-// UI Elements: Brand colors and structural borders
+    // UI Elements: Brand colors and structural borders
     --primary: #{$blue-500}; 
     --border: #{$gray-700};
-    --theme-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+    --theme-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /**
+     * Elevation System (Shadow tokens)
+     * -----------------------------------------------------------------------------------
+     * Standardized shadow definitions for depth layering.
+     * Uses alpha-heavy values to ensure visibility against dark-mode surfaces.
+     */
+    /** Large Elevation: Used for modals, floating action buttons, and active hover states */
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    
+    /** Medium Elevation: Used for standard cards and dropdown menus */
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    
+    /** Small Elevation: Used for inputs, buttons, and minor interactive elements */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+
 }

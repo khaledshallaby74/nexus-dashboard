@@ -6,8 +6,10 @@
         "PRODUCTS": "المنتجات",
         "USERS": "المستخدمين",
         "CATEGORIES": "الأقسام",
+        "ORDERS": "الطلبات",
         "PRODUCT_SINGULAR": "منتج",
         "CATEGORY_SINGULAR": "قسم",
+        "ORDER_SINGULAR": "طلب مالي",
         "TOGGLE_THEME": "تغيير الوضع",
         "TABLE": "جدول",
         "CARDS": "بطاقات",
@@ -130,6 +132,40 @@
             "NAME": "اسم القسم",
             "SLUG": "رمز الرابط (Slug)",
             "URL": "رابط موقع المورد (URL)"
+        }
+    },
+
+
+    "ORDERS": {
+        "INVOICE_NUMBER": "فاتورة رقم : {{id}}",
+        "UNIT_PCS": "قطعة",
+        "FILTER_BAR": {
+            "TITLE": "سجل الطلبات الماليّة",
+            "SUBTITLE": "مراقبة التدفقات النقدية، مراجعة الفواتير اللوجستية، وتصفية عمليات الشراء والخصومات.",
+            "SEARCH_PLACEHOLDER": "البحث برقم الطلب أو معرف العميل...",
+            "LABELS": {
+                "SEARCH": "البحث المالي",
+                "STATUS": "حالة الطلب"
+            }
+        },
+        "SUMMARY_CARDS": {
+            "GROSS_REVENUE": "إجمالي الإيرادات",
+            "NET_REVENUE": "صافي الإيرادات المحصلة",
+            "LOGISTICS_UNITS": "إجمالي الوحدات المعالجة"
+        },
+        "FILTERS": {
+            "ALL": "جميع الطلبات",
+            "PENDING": "قيد المراجعة",
+            "SHIPPED": "تم الشحن",
+            "DELIVERED": "تم التسليم"
+        },
+        "TABLE": {
+            "ID": "رقم الفاتورة (ID)",
+            "CUSTOMER_ID": "كود العميل",
+            "ITEMS_COUNT": "إجمالي الكمية",
+            "GROSS_TOTAL": "الإجمالي الإيرادي",
+            "NET_TOTAL": "الصافي المالي",
+            "STATUS": "الحالة التشغيلية"
         }
     }
 }

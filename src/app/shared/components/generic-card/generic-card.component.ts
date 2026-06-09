@@ -25,4 +25,10 @@ export class GenericCardComponent {
   
   /** Propagates an execution event trigger to invoke destructive removal actions on the parent entity frame */
   delete = output<void>();
+  
+  /** * Action Visibility Toggle:
+   * Controls the render state of action-oriented UI controls (e.g., edit/delete buttons).
+   * Useful for read-only view modes or permission-based interface masking.
+   */
+  showActions = input<boolean>(true);
 }

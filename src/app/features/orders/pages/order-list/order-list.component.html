@@ -1,0 +1,86 @@
+<!-- ============================================================
+  Order List — Main Page Container
+  Composes the full orders page layout:
+    - Financial KPI summary strip (gross, net, logistics)
+    - Filter bar (search, status, view mode toggle)
+    - Main content zone (table view / card grid with lazy loading)
+    - Pagination footer (shown when results exceed page size)
+  ============================================================ -->
+<div class="order-list-page-container">
+
+  <!-- Top KPI strip — high-level financial + logistics metrics shown at all times -->
+  <div class="financial-summary-cards-strip w-100"> 
+    <div class="kpi-card-metric gross-revenue">
+      <span class="label">{{ 'ORDERS.SUMMARY_CARDS.GROSS_REVENUE' | translate }}</span>
+      <h3>{{ ordersService.grossRevenue() | currency:'USD':'symbol':'1.2-2' }}</h3>
+    </div>
+
+    <div class="kpi-card-metric net-revenue">
+      <span class="label">{{ 'ORDERS.SUMMARY_CARDS.NET_REVENUE' | translate }}</span>
+      <h3>{{ ordersService.netRevenue() | currency:'USD':'symbol':'1.2-2' }}</h3>
+    </div>
+
+    <div class="kpi-card-metric items-processed">
+      <span class="label">{{ 'ORDERS.SUMMARY_CARDS.LOGISTICS_UNITS' | translate }}</span>
+      <h3>{{ ordersService.totalItemsProcessed() }}
+         <span>{{ 'ORDERS.UNIT_PCS' | translate }}</span>
+      </h3>
+    </div>
+
+  </div>
+
+  <!-- Filter bar — status dropdown, search field, and grid/list view switcher -->
+  <app-order-filter-bar
+    [statuses]="ordersService.statusesDropdown()"
+    [selectedStatus]="ordersService.selectedStatus()"
+    (filterChange)="onFilterChange($event)"
+    (viewModeChange)="onViewModeChange($event)">
+  </app-order-filter-bar>
+
+  <!-- Main display zone — switches between a table view and a card grid layout -->
+  <div class="main-content-display-zone mt-3">
+    @if (viewMode() === 'table') {
+      <!-- Table mode: renders orders in a generic data table with row-level click to view details -->
+      <app-generic-table
+        [data]="ordersService.orders()"
+        [config]="gridConfig"
+        (rowClick)="onViewOrderDetails($event)">
+      </app-generic-table>
+    } @else {
+
+      <!-- Grid mode: renders orders as cards with deferred (lazy) loading per card -->
+      <div class="cards-grid">
+        @for (order of ordersService.orders(); track order.id) { 
+          
+          <!-- @defer on viewport — each card is lazy-loaded only when it scrolls into the viewport; a skeleton placeholder is shown until then -->
+          @defer (on viewport) {
+            <app-generic-card 
+              [showActions]="false" 
+              (cardClick)="onViewOrderDetails(order)">
+
+              <app-order-card card-body [order]="order"></app-order-card>
+
+            </app-generic-card>
+          } @placeholder {
+            <div class="order-skeleton-card" aria-hidden="true"></div>
+          }
+
+        }
+      </div>
+    }
+
+  </div>
+
+  <!-- Pagination footer — only rendered when the total order count exceeds the configured page size -->
+  @if (ordersService.totalOrdersCount() > pageSize) {
+    <div class="pagination-footer-wrapper flex-center mt-4 pt-3">
+      <app-pagination
+        [totalItems]="ordersService.totalOrdersCount()"
+        [pageSize]="pageSize"
+        [currentPage]="currentPage"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </div>
+  }
+
+</div>

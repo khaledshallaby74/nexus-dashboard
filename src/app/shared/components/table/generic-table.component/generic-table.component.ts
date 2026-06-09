@@ -58,10 +58,17 @@ export class GenericTableComponent<T extends Record<string, any> = Record<string
       if (numericStock < 10) return 'warning';    // Restricted Availability: Low inventory threshold alert boundary
       return 'success';                           // Stable Asset Pool: Fully available and stocked status
     }
+    if (key === 'status') {
+      // --- Order Lifecycle State Mapping ---
+      if (safeStringValue === 'pending') return 'warning';    // Awaiting Processing: Pending verification or validation
+      if (safeStringValue === 'shipped') return 'info';       // Logistics Transit: Order dispatched and in-transit
+      if (safeStringValue === 'delivered') return 'success';  // Finalized Transaction: Successfully delivered and reconciled
+      if (safeStringValue === 'cancelled') return 'danger';   // Voided Transaction: Order rejected or canceled by client
+    }
 
     // 3. Specialized Domain Logic: Standardize default static numeric presentations (e.g., Prices)
-    if (key === 'price') {
-      return 'info'; // Fallback presentation layer constraint for flat currency metrics
+    if (key === 'price' || key === 'total' || key === 'discountedTotal') {
+      return 'neutral-money'; // Fallback presentation layer constraint for flat currency metrics
     }
 
     // 4. Fallback Default: Pass clean textual labels (e.g., Status flags like 'delivered' or 'pending')

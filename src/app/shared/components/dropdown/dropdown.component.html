@@ -8,7 +8,7 @@
     [attr.aria-expanded]="isOpen()"
     aria-haspopup="listbox">
     
-    <span class="fw-semibold fs-13 text-main">{{ selectedLabel() }}</span>
+    <span class="fw-semibold fs-13 text-main">{{ selectedLabel() | translate }}</span>
     <!-- Sort Down Icon: Purely decorative, hidden from screen readers -->
     <span class="ic-base mb-4 bg-cover ic-s14 text-main ic-sortDown" aria-hidden="true"></span>
   </button>
@@ -22,7 +22,7 @@
           [class.active]="selectedValue === item.value"
           (click)="select(item)"
           role="option">
-          <span class="fs-12 fw-medium">{{ item.label }}</span>
+          <span class="fs-12 fw-medium">{{ item.label | translate }}</span>
         </button>
       }
     </div>
